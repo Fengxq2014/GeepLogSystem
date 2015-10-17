@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeepLogSystem", "GeepLogSystem\GeepLogSystem.csproj", "{71165019-7982-4765-8818-7536FC2B9569}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeepLogSystem", "GeepLogSystem\GeepLogSystem.csproj", "{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeepLogSystem.Tests", "GeepLogSystem.Tests\GeepLogSystem.Tests.csproj", "{DD02256E-9B31-4935-8FD1-77421F94D33A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeepLogSystem.Tests", "C:\Users\DefNed\Documents\Visual Studio 2013\Projects\GeepLogSystem\GeepLogSystem.Tests\GeepLogSystem.Tests.csproj", "{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{71165019-7982-4765-8818-7536FC2B9569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71165019-7982-4765-8818-7536FC2B9569}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71165019-7982-4765-8818-7536FC2B9569}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71165019-7982-4765-8818-7536FC2B9569}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD02256E-9B31-4935-8FD1-77421F94D33A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD02256E-9B31-4935-8FD1-77421F94D33A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD02256E-9B31-4935-8FD1-77421F94D33A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD02256E-9B31-4935-8FD1-77421F94D33A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
