@@ -1,0 +1,159 @@
+﻿@{
+    ViewBag.Title = "搜索";
+    Layout = "~/Views/_LayoutPage.cshtml";
+}
+
+<h2 class="sub-header">搜索结果</h2>
+<span>共找到： @ViewBag.Count 条数据</span>
+<nav><ul class="pagination pagination-demo pagination-sm"></ul></nav>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>AccNo</th>
+                <th>DevNo</th>
+                <th>Time</th>
+                <th>Class</th>
+                <th>LogName</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var item in ViewBag.ZFTList)
+                {
+                    <tr data-accno="@item.AccNo" data-devno="@item.DevNo" data-time="@item.Time" data-class="@item.Class" data-ip="@item.Ip" data-level="@item.Level" data-description="@item.Description" data-label="@item.Label" data-ex="@item.Exception" data-iserrorlog="@item.IsErrorLog" data-logname="@item.LogName" class="zft-tr">
+                        @{if (item.IsErrorLog)
+                        {
+                            <th><span class="glyphicon glyphicon-remove"></span>&nbsp;@item.AccNo </th>
+                        }
+                        else
+                        {
+                            <th><span class="glyphicon glyphicon-ok"></span>&nbsp;@item.AccNo</th>
+                        }
+                        }
+
+                        <th>@item.DevNo</th>
+                        <th>@item.Time</th>
+                        <th>@item.Class</th>
+                        @if (item.LogName == "ZFTPAD")
+                        {
+                            <th>pad智付通</th>
+                        }
+                        else if (item.LogName == "CVEPT")
+                        {
+                            <th>转账电话</th>
+                        }
+                        else if (item.LogName == "MANAGEMENT")
+                        {
+                            <th>管理端</th>
+                        }
+                        else if (item.LogName == "PROTOCOLCOMPONENT")
+                        {
+                            <th>协议组件</th>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <ul class="pagination pagination-demo"></ul>
+</div>
+
+@section script{
+    <link href="~/Scripts/dialog/css/bootstrap-dialog.min.css" rel="stylesheet" />
+    <script src="~/Scripts/dialog/js/bootstrap-dialog.min.js"></script>
+    <script src="~/Scripts/jqPaginator.min.js"></script>
+    <script>
+        var list = list || {};
+        (function ($) {
+            $.getUrlParam = function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return decodeURI(r[2]); return null;
+            }
+        })(jQuery);
+        (function () {
+            $(document).ready(function () {
+                $('#10').addClass('active');
+                list.click();
+                list.searchTermsInit();
+                list.page();
+            });
+            list.searchTerms={accNo:undefined,devNo:undefined,className:undefined,label:undefined,description:undefined,action:undefined,error:undefined,normal:undefined,q:undefined,at:undefined,changepage:true,startTime:undefined,endTime:undefined};
+            list.searchTermsInit=function(){
+                list.searchTerms.accNo=$.getUrlParam('accNo');
+                list.searchTerms.devNo=$.getUrlParam('devNo');
+                list.searchTerms.className=$.getUrlParam('label');
+                list.searchTerms.description=$.getUrlParam('description');
+                list.searchTerms.action=$.getUrlParam('action');
+                list.searchTerms.error=$.getUrlParam('error');
+                list.searchTerms.normal=$.getUrlParam('normal');
+                list.searchTerms.q=$.getUrlParam('q').replace(/(^\s*)|(\s*$)/g, "");
+                list.searchTerms.at=$.getUrlParam('at');
+                list.searchTerms.startTime=$.getUrlParam('startTime').replace('%3A',':');
+                list.searchTerms.endTime=$.getUrlParam('endTime').replace('%3A',':');
+            };
+            list.click = function () {
+                $('.zft-tr').on('click', function (e) {
+                    var self = this,
+                        accNo = $(self).attr('data-accNo'),
+                        devNo = $(self).attr('data-devNo'),
+                        time = $(self).attr('data-Time'),
+                        clas = $(self).attr('data-class'),
+                        ip = $(self).attr('data-ip'),
+                        level = $(self).attr('data-level'),
+                        label = $(self).attr('data-label'),
+                        description = $(self).attr('data-description'),
+                        logName=$(self).attr('data-logName'),
+                        textAndPic = $('<div></div>');
+                    textAndPic.append('<b>卡号：</b>' + accNo + '</br><hr>');
+                    textAndPic.append('<b>终端号：</b>' + devNo + '</br><hr>');
+                    textAndPic.append('<b>时间：</b>' + time + '</br><hr>');
+                    textAndPic.append('<b>类名：</b>' + clas + '</br><hr>');
+                    textAndPic.append('<b>ip：</b>' + ip + '</br><hr>');
+                    textAndPic.append('<b>日志级别：</b>' + level + '</br><hr>');
+                    textAndPic.append('<b>日志标志：</b>' + logName + '</br><hr>');
+                    textAndPic.append('<b>自定义标志：</b>' + label + '</br><hr>');
+                    textAndPic.append('<b>附加信息：</b>' + description + '</br>');
+                    if ($(self).attr('data-isErrorLog') && $(self).attr('data-ex')) {
+                        textAndPic.append('<hr><b>异常信息：</b>' + $(self).attr('data-ex') + '</br>');
+                    };
+
+                    BootstrapDialog.show({
+                        title: '日志详情',
+                        message: textAndPic,
+                        buttons: [{
+                            label: '关闭',
+                            action: function (dialogItself) {
+                                dialogItself.close();
+                            }
+                        }],
+                        onshown: function () {
+                            $('.modal-content').css('overflow-y', 'auto');
+                        }
+                    });
+
+                });
+            };
+            list.page = function(){
+                var uri=$.param(list.searchTerms);
+                $(".pagination-demo").jqPaginator({
+                    totalCounts: @ViewBag.Count,
+                    pageSize: @ViewBag.PageSize,
+                    visiblePages: 10,
+                    currentPage: @ViewBag.Page,
+                    first: '<li class="first"><a href="?p=1&' + uri + '">首页<\/a><\/li>',
+                    prev: '<li class="prev"><a href="?p={{page}}&' + uri + '">上一页<\/a><\/li>',
+                    next: '<li class="next"><a href="?p={{page}}&' + uri + '">下一页<\/a><\/li>',
+                    last: '<li class="last"><a href="?p={{totalPages}}&' + uri + '">末页<\/a><\/li>',
+                    page: '<li class="page"><a href="?p={{page}}&' + uri + '">{{page}}<\/a><\/li>',
+                    onPageChange: function (n) {
+                        $(".pagination-demo .disabled").each(function(){
+                            $(this).find('a').attr('href','#');
+                        })
+                    }
+                });
+            };
+        })();
+    </script>
+}

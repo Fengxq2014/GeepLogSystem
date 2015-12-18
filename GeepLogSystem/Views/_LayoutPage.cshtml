@@ -10,7 +10,16 @@
     <link rel="icon" href="../../favicon.ico">
     <title>@ViewBag.Title</title>
     <link href="~/Style/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Style/datetimepicker.css" rel="stylesheet" />
     <link href="~/Style/dashboard.css" rel="stylesheet" />
+    <style>
+        .dropdown-menu input {
+            margin: 3px 10px;
+        }
+        li div{
+            padding-top:8px;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -22,17 +31,47 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">GeeLogSystem</a>
+                <a class="navbar-brand" href="/">GeeLogSystem</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Settings</a></li>
-                    <li><a href="#">Profile</a></li>
-                    <li><a href="#">Help</a></li>
+                    <li>
+                        <div class="date col-sm-12" id="start" data-date="@DateTime.Now.ToString("yyyy-MM-dd")" data-date-format="yyyy-mm-dd">
+                            <input class="form-control" size="12" type="text" value="选择开始日期" readonly>
+                            <span class="add-on"><i class="icon-th"></i></span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="date col-sm-12" id="end" data-date="@DateTime.Now.ToString("yyyy-MM-dd")" data-date-format="yyyy-mm-dd">
+                            <input class="form-control" size="12" type="text" value="选择结束日期" readonly>
+                            <span class="add-on"><i class="icon-th"></i></span>
+                        </div>
+                    </li>
+                    <li><a id="search">搜索</a></li>
                 </ul>
-                <form class="navbar-form navbar-right">
-                    <input type="text" class="form-control" placeholder="Search...">
+                <form id="form" class="navbar-form navbar-right" action="/home/search" method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="q" placeholder="搜索..">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">筛选 <span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><input value="true" type="checkbox" name="accNo" id="accNo"><label for="accNo">卡号（完全匹配）</label></li>
+                                <li><input value="true" type="checkbox" name="className" id="className"><label for="className">类名（完全匹配）</label></li>
+                                <li><input type="checkbox" name="at" value="@ViewBag.actionName" checked="checked" hidden /></li>
+                                <li><input id="startTimeCheckBox" type="checkbox" name="startTime" value="true" hidden /></li>
+                                <li><input id="endTimeCheckBox" type="checkbox" name="endTime" value="true" hidden /></li>
+                                <li><input value="true" type="checkbox" name="devNo" id="devNo" /><label for="devNo">终端号（完全匹配）</label></li>
+                                <li><input value="true" type="checkbox" name="label" id="label" /><label for="label">自定义标志（完全匹配）</label></li>
+                                <li><input value="true" type="checkbox" name="description" id="description" /><label for="description">附加描述（模糊匹配）</label></li>
+
+                                <li role="separator" class="divider"></li>
+
+                                <li><input value="true" type="checkbox" name="error" id="error" /><label for="error">异常</label></li>
+                                <li><input value="true" type="checkbox" name="normal" id="normal" /><label for="normal">正常</label></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div><!-- /input-group -->
+                    @*<input type="text" class="form-control" placeholder="Search...">*@
                 </form>
             </div>
         </div>
@@ -41,22 +80,22 @@
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
-                    <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">Reports</a></li>
-                    <li><a href="#">Analytics</a></li>
-                    <li><a href="#">Export</a></li>
+                    <li id="1"><a href="/">总体 <span class="sr-only">(current)</span></a></li>
+                    <li id="2"><a href="/home/zft">pad智付通</a></li>
+                    <li id="3"><a href="/home/CVEPT">转账电话</a></li>
+                    <li id="4"><a href="/home/Management">管理端</a></li>
+                    <li id="5"><a href="/home/ProtocolComponent">协议组件</a></li>
                 </ul>
                 <ul class="nav nav-sidebar">
-                    <li><a href="">Nav item</a></li>
-                    <li><a href="">Nav item again</a></li>
-                    <li><a href="">One more nav</a></li>
-                    <li><a href="">Another nav item</a></li>
-                    <li><a href="">More navigation</a></li>
+                    <li id="6"><a href="/home/zfterror">pad智付通（异常）</a></li>
+                    <li id="7"><a href="/home/cvepterror">转账电话（异常）</a></li>
+                    <li id="8"><a href="/home/Managementerror">管理端（异常）</a></li>
+                    <li id="9"><a href="/home/ProtocolComponentError">协议组件（异常）</a></li>
                 </ul>
                 <ul class="nav nav-sidebar">
-                    <li><a href="">Nav item again</a></li>
-                    <li><a href="">One more nav</a></li>
-                    <li><a href="">Another nav item</a></li>
+                    <li id="10"><a href="/home/search">搜索</a></li>
+                    <li id="11"><a href="/home/OverallStatistics">总体统计</a></li>
+                    <li id="12"><a href="/home/zftStatistics">pad智付通统计</a></li>
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -67,6 +106,55 @@
 
     <script src="~/Scripts/jquery-1.11.3.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script>
+        var layout = layout || {};
+        (function () {
+            $(document).ready(function () {
+                layout.datepicker();
+                layout.changetime();
+                layout.submit();
+            });
+            layout.datepicker = function () {
+                $('#start').datetimepicker(
+                    {
+                        format: "yyyy-mm-ddThh:ii",
+                        autoclose: true,
+                        minuteStep: 5,
+                        language: "zh-CN"
+                    });
+                $('#end').datetimepicker(
+                    {
+                        format: "yyyy-mm-ddThh:ii",
+                        autoclose: true,
+                        minuteStep: 5,
+                        language: "zh-CN"
+                    });
+            };
+            layout.changetime = function () {
+                $($('.form-control')[0]).change(function () {
+                    var startTime = $($('.form-control')[0]).val();
+                    if (startTime !== "选择开始日期") {
+                        $('#startTimeCheckBox').attr('value', startTime);
+                        $('#startTimeCheckBox').attr("checked", 'true');
+                    };
+                });
+                $($('.form-control')[1]).change(function () {
+                    var endTime = $($('.form-control')[1]).val();
+                    if (endTime !== "选择结束日期") {
+                        $('#endTimeCheckBox').attr('value', endTime);
+                        $('#endTimeCheckBox').attr('checked', 'true');
+                    };
+                });
+            };
+            layout.submit = function () {
+                $('#search').on('click', function () {
+                    $('#form').submit();
+                });
+            };
+        })(); 
+    </script>
     @RenderSection("script", true)
 </body>
 </html>

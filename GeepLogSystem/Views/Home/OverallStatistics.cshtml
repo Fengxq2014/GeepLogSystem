@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = "总体统计";
+    Layout = "~/Views/_LayoutPage.cshtml";
+    string day1 = DateTime.Now.ToShortDateString();
+    string day2 = DateTime.Now.AddDays(-1).ToShortDateString();
+    string day3 = DateTime.Now.AddDays(-2).ToShortDateString();
+    string day4 = DateTime.Now.AddDays(-3).ToShortDateString();
+    string day5 = DateTime.Now.AddDays(-4).ToShortDateString();
+    string day6 = DateTime.Now.AddDays(-5).ToShortDateString();
+    string day7 = DateTime.Now.AddDays(-6).ToShortDateString();
+}
+
+<div style="height:500px" id="echarts"></div>
+@section script{
+<script src="~/Scripts/dist/echarts.js"></script>
+<script type="text/javascript">
+    $('#11').addClass('active');
+    // 路径配置
+    require.config({
+        paths: {
+            echarts: '../Scripts/dist'
+        }
+    });
+    // 使用
+    require(
+        [
+            'echarts',
+            'echarts/chart/line' // 按需加载
+        ],
+        function (ec) {
+            // 基于准备好的dom，初始化echarts图表
+            var pad = ec.init(document.getElementById('echarts'));
+
+            var option = {
+    title : {
+        text: '最近一周错误日志量',
+        subtext: '缓存1天'
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['pad智付通','转账电话','管理端','协议组件']
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : false,
+            data : ['@day1','@day2','@day3','@day4','@day5','@day6','@day7']
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            axisLabel : {
+                formatter: '{value}'
+            }
+        }
+    ],
+    series : [
+        {
+            name:'pad智付通',
+            type:'line',
+            data: @ViewBag.Pad,
+            markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name: '平均值'}
+                ]
+            }
+        },
+        {
+            name:'转账电话',
+            type:'line',
+            data:@ViewBag.Cvept,
+            markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name : '平均值'}
+                ]
+            }
+        },
+        {
+            name:'管理端',
+            type:'line',
+            data:@ViewBag.Management,
+            markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name : '平均值'}
+                ]
+            }
+        },
+        {
+            name:'协议组件',
+            type:'line',
+            data:@ViewBag.ProtocolComponent,
+            markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name : '平均值'}
+                ]
+            }
+        }
+    ]
+};
+
+            // 为echarts对象加载数据
+            pad.setOption(option);
+        }
+    );
+</script>    
+    
+    }
+

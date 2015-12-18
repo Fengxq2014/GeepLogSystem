@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = "pad智付通错误最多";
+    Layout = "~/Views/_LayoutPage.cshtml";
+}
+<div style="height:500px" id="echarts"></div>
+@section script{
+    <script src="~/Scripts/dist/echarts.js"></script>
+    <script type="text/javascript">
+        $('#12').addClass('active');
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: '../Scripts/dist'
+            }
+        });
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/bar' // 按需加载
+            ],
+            function (ec) {
+                // 基于准备好的dom，初始化echarts图表
+                var pad = ec.init(document.getElementById('echarts'));
+
+                var option = {
+                    title: {
+                        text: '异常最多的10个类',
+                        subtext: '异常量'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['异常量']
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: @Html.Raw(ViewBag.Names)
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '异常量',
+                            type: 'bar',
+                            data: @Html.Raw(ViewBag.Values),
+                            markPoint: {
+                                data: [
+                                    { type: 'max', name: '最大值' }
+                                ]
+                            }
+                        }
+                    ]
+                };
+
+                // 为echarts对象加载数据
+                pad.setOption(option);
+            }
+        );
+    </script>
+}
+

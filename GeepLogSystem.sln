@@ -5,7 +5,9 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeepLogSystem", "GeepLogSystem\GeepLogSystem.csproj", "{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeepLogSystem.Tests", "C:\Users\DefNed\Documents\Visual Studio 2013\Projects\GeepLogSystem\GeepLogSystem.Tests\GeepLogSystem.Tests.csproj", "{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeepLogSystem.Dao", "GeeLogSystem.Dao\GeepLogSystem.Dao.csproj", "{C6C65B70-8E24-45A3-9CB3-94682D3ED806}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogSystem", "LogSystem\LogSystem.csproj", "{968DEACC-3E5F-4B61-B84C-0A3323719FD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +19,14 @@ Global
 		{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC0624FB-FBE4-4CFE-A967-B93E3ED6F101}.Release|Any CPU.Build.0 = Release|Any CPU
-		{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{94F93610-BFB6-46BF-B2C7-5A5D7C1BBF34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6C65B70-8E24-45A3-9CB3-94682D3ED806}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6C65B70-8E24-45A3-9CB3-94682D3ED806}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6C65B70-8E24-45A3-9CB3-94682D3ED806}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6C65B70-8E24-45A3-9CB3-94682D3ED806}.Release|Any CPU.Build.0 = Release|Any CPU
+		{968DEACC-3E5F-4B61-B84C-0A3323719FD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{968DEACC-3E5F-4B61-B84C-0A3323719FD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{968DEACC-3E5F-4B61-B84C-0A3323719FD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{968DEACC-3E5F-4B61-B84C-0A3323719FD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
