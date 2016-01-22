@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "交行";
+    Layout = "~/Views/_LayoutPage.cshtml";
+}
+
+<h2 class="sub-header">@ViewBag.Title</h2>
+
+<p>共找到： @ViewBag.Count 条数据</p>
+<nav><ul class="pagination pagination-demo pagination-sm"></ul></nav><div class="table-responsive">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>交易类型</th>
+                <th>交易时间</th>
+                <th>返回码</th>
+                <th>终端标志</th>
+                <th>流水号</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+    foreach (var item in ViewBag.ZFTList)
+    {
+        <tr data-trade_time="@item.Trade_Time" data-trade_type="@item.Trade_Type" data-resp_no="@item.Resp_NO" data-pin_code="@item.Pin_Code" data-ftag="@item.Ftag" data-message="@item.Message" class="zft-tr">
+            @{if (!item.Succeed)
+                {
+                    <th><span class="glyphicon glyphicon-remove"></span>&nbsp;@item.Trade_Type </th>
+                }
+                else
+                {
+                <th><span class="glyphicon glyphicon-ok"></span>&nbsp;@item.Trade_Type</th>
+                }
+            }
+            <th>@item.Trade_Time</th>
+            <th>@item.Resp_NO</th>
+            <th>@item.Pin_Code</th>
+            <th>@item.Ftag</th>
+        </tr>
+    }
+}
+        </tbody>
+    </table>
+    <ul class="pagination pagination-demo"></ul>
+</div>
+
+@section script{
+    <link href="~/Scripts/dialog/css/bootstrap-dialog.min.css" rel="stylesheet" />
+    <script src="~/Scripts/dialog/js/bootstrap-dialog.min.js"></script>
+    <script src="~/Scripts/jqPaginator.min.js"></script>
+    <script>
+
+        var list = list || {};
+        (function () {
+            $(document).ready(function () {
+                $('#@ViewBag.ActiveId').addClass('active');
+                list.click();
+                list.page();
+            });
+            list.click = function () {
+                $('.zft-tr').on('click', function (e) {
+                    var self = this,
+                        Trade_Type = $(self).attr('data-Trade_Type'),
+                        Trade_Time = $(self).attr('data-Trade_Time'),
+                        Resp_NO = $(self).attr('data-Resp_NO'),
+                        Pin_Code = $(self).attr('data-Pin_Code'),
+                        Ftag = $(self).attr('data-Ftag'),
+                        Message = $(self).attr('data-Message'),
+                        
+                        textAndPic = $('<div></div>');
+                    textAndPic.append('<b>交易类型：</b>' + Trade_Type + '</br><hr>');
+                    textAndPic.append('<b>交易时间：</b>' + Trade_Time + '</br><hr>');
+                    textAndPic.append('<b>返回码：</b>' + Resp_NO + '</br><hr>');
+                    textAndPic.append('<b>终端标志：</b>' + Pin_Code + '</br><hr>');
+                    textAndPic.append('<b>流水号：</b>' + Ftag + '</br><hr>');
+                    textAndPic.append('<b>附加信息：</b>' + Message + '</br><hr>');
+                    
+                    BootstrapDialog.show({
+                        title: '日志详情',
+                        message: textAndPic,
+                        buttons: [{
+                            label: '关闭',
+                            action: function (dialogItself) {
+                                dialogItself.close();
+                            }
+                        }],
+                        onshown: function () {
+                            $('.modal-content').css('overflow-y', 'auto');
+                        }
+                    });
+
+                });
+            };
+            list.page = function(){
+                $(".pagination-demo").jqPaginator({
+                    totalCounts: @ViewBag.Count,
+                    pageSize: @ViewBag.PageSize,
+                    visiblePages: 10,
+                    currentPage: @ViewBag.Page,
+                    first: '<li class="first"><a href="?p=1">首页<\/a><\/li>',
+                    prev: '<li class="prev"><a href="?p={{page}}">上一页<\/a><\/li>',
+                    next: '<li class="next"><a href="?p={{page}}">下一页<\/a><\/li>',
+                    last: '<li class="last"><a href="?p={{totalPages}}">末页<\/a><\/li>',
+                    page: '<li class="page"><a href="?p={{page}}">{{page}}<\/a><\/li>',
+                    onPageChange: function (n) {
+                        $(".pagination-demo .disabled").each(function(){
+                            $(this).find('a').attr('href','#');
+                        })
+                    }
+                });
+            };
+        })();
+    </script>
+}
+
+
+
+
+

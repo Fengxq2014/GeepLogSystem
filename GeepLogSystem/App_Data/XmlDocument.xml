@@ -639,6 +639,16 @@
             协议组件
             </summary>
         </member>
+        <member name="P:GeepLogSystem.Models.log_list.Trade_Type">
+            <summary>
+            交易类型
+            </summary>
+        </member>
+        <member name="P:GeepLogSystem.Models.log_list.Trade_Time">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:GeepLogSystem.Models.SearchTermsModel">
             <summary>
             搜索条件模型
@@ -759,12 +769,22 @@
             错误信息
             </summary>
         </member>
+        <member name="P:GeepLogSystem.Models.ZFTLogModel.Trade_Type">
+            <summary>
+            交易类型
+            </summary>
+        </member>
+        <member name="P:GeepLogSystem.Models.ZFTLogModel.Trade_Time">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:GeepLogSystem.Service.SearchService">
             <summary>
             搜索服务类
             </summary>
         </member>
-        <member name="M:GeepLogSystem.Service.SearchService.Search(GeepLogSystem.Models.SearchTermsModel,System.Int64@,System.Int32)">
+        <member name="M:GeepLogSystem.Service.SearchService.Search(GeepLogSystem.Models.SearchTermsModel,System.Int64@,System.Int32,System.Int32)">
             <summary>
             搜索
             </summary>

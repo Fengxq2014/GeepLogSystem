@@ -37,7 +37,7 @@ namespace GeepLogSystem.Dao
         /// 数据库
         /// </summary>
         protected static IMongoDatabase database = client.GetDatabase(mongoUrl.DatabaseName);
-        //public string a;
+
         public MongoDBHelper()
         {
             Collection = database.GetCollection<TEntity>(typeof(TEntity).Name.ToLower());
@@ -123,7 +123,7 @@ namespace GeepLogSystem.Dao
         /// <param name="filter"></param>
         /// <param name="page">页码</param>
         /// <returns></returns>
-        public IEnumerable<TEntity> FindAll(out long count, FilterDefinition<TEntity> filter = null, int page = 1)
+        public IEnumerable<TEntity> FindAll(out long count, FilterDefinition<TEntity> filter = null, int page = 1, int PageSize = 15)
         {
             if (filter == null)
             {
@@ -136,8 +136,8 @@ namespace GeepLogSystem.Dao
             var sort = Builders<TEntity>.Sort.Descending("Time");
             var a = Collection.Find(filter);
             count = a.CountAsync().Result;
-            int PageSize = Convert.ToInt16(Help.GetConfigValueForNull("PageSize"));
-            return a.Sort(sort).Skip((page - 1) * PageSize).Limit(PageSize * page).ToListAsync<TEntity>().Result;
+            //int PageSize = Convert.ToInt16(Help.GetConfigValueForNull("PageSize"));
+            return a.Skip((page - 1) * PageSize).Limit(PageSize).Sort(sort).ToListAsync<TEntity>().Result;
             //List<TEntity> a=new List<TEntity>();
             //Collection.Find(new MongoDB.Bson.BsonDocument()).ForEachAsync(x => a.Add(x));
             //return a;
@@ -168,12 +168,12 @@ namespace GeepLogSystem.Dao
         /// map-reduce获取一周最多的类名
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<BsonDocument>  MapReduce()
+        public IEnumerable<BsonDocument> MapReduce()
         {
-            string map= @"function(){
+            string map = @"function(){
                         emit(this.Class, 1);
                         }";
-            string reduce= @"function(key,values){
+            string reduce = @"function(key,values){
                         var sum=0;
                         values.forEach(function(doc){
                             sum += 1;
@@ -183,10 +183,10 @@ namespace GeepLogSystem.Dao
             var builder = Builders<TEntity>.Filter;
             var options = new MapReduceOptions<TEntity, BsonDocument>
             {
-                Filter = builder.Eq("IsErrorLog",true) & builder.Gte("Time",DateTime.Now.AddMonths(-1)) & builder.Lte("Time",DateTime.Now),
-                MaxTime=TimeSpan.FromSeconds(2)
+                Filter = builder.Eq("IsErrorLog", true) & builder.Gte("Time", DateTime.Now.AddMonths(-1)) & builder.Lte("Time", DateTime.Now),
+                MaxTime = TimeSpan.FromSeconds(2)
             };
-            return Collection.MapReduceAsync<BsonDocument>(new BsonJavaScript(map), new BsonJavaScript(reduce),options).Result.ToListAsync().Result;
+            return Collection.MapReduceAsync<BsonDocument>(new BsonJavaScript(map), new BsonJavaScript(reduce), options).Result.ToListAsync().Result;
         }
     }
 }

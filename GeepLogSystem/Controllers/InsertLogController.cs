@@ -1,4 +1,6 @@
 ﻿using GeepLogSystem.Dao;
+using GeepLogSystem.Models;
+using GeepLogSystem.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,10 +40,10 @@ namespace GeepLogSystem.Controllers
             return "ok";
         }
 
-         //<summary>
-         //获取ip
-         //</summary>
-         //<returns>ip</returns>
+        //<summary>
+        //获取ip
+        //</summary>
+        //<returns>ip</returns>
         private string GetIp()
         {
             if (System.Web.HttpContext.Current.Request.ServerVariables["HTTP_VIA"] != null) // 有代理
@@ -51,7 +53,15 @@ namespace GeepLogSystem.Controllers
             else// 没有代理
             {
                 return System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"].ToString(); //没有获取到真实ip则返回代理ip
-            } 
+            }
+        }
+
+        public IEnumerable<log_list> GetLog([FromUri]SearchTermsModel search,int p = 1, int pagesize = 3)
+        {
+            long count;
+            search.Action = "newindex";
+            return SearchService.Search<log_list>(search, out count, p, pagesize);
+            //return SearchService.Search(search, out count, p, pagesize);
         }
     }
 }

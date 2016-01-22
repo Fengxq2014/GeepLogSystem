@@ -8,6 +8,7 @@ namespace GeepLogSystem.Models
     /// <summary>
     /// ZFT日志
     /// </summary>
+    [MongoDB.Bson.Serialization.Attributes.BsonIgnoreExtraElements]
     public class ZFTLogModel : GeepLogSystem.Dao.GeepLogModel
     {
         /// <summary>
@@ -65,5 +66,21 @@ namespace GeepLogSystem.Models
         /// 错误信息
         /// </summary>
         public string Exception { get; set; }
+
+        /// <summary>
+        /// 交易类型
+        /// </summary>
+        public string Trade_Type { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Trade_Time { get; set; }
+
+        public string Message { get; set; }
+
+        public string Resp_NO { get; set; }
+        public string Ftag { get; set; }
+        public string Pin_Code { get; set; }
     }
 }

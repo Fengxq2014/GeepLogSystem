@@ -1,0 +1,314 @@
+﻿@{
+    Layout = "~/Views/_LayoutPage.cshtml";
+    ViewBag.Title = "首页";
+}
+
+<h1 class="page-header">首页</h1>
+
+<div class="row placeholders">
+    <div class="col-xs-6 col-sm-6 placeholder">
+        <div id="pad" style="height:250px"></div>
+        <h4>支付通pad</h4>
+    </div>
+    <div class="col-xs-6 col-sm-6 placeholder">
+        <div id="jh" style="height:250px"></div>
+        <h4>交行</h4>
+    </div>
+    <div class="col-xs-6 col-sm-6 placeholder">
+        <h4 >正常日志</h4>
+        <ul id="interpolation">
+
+        </ul>
+    </div>
+    <div class="col-xs-6 col-sm-6 placeholder">
+        <h4 style="color:red">异常日志</h4>
+        <ul id="errorul">
+            
+        </ul>
+    </div>
+</div>
+@section script{
+<script src="~/Scripts/doT.min.js"></script>
+<link href="~/Scripts/dialog/css/bootstrap-dialog.min.css" rel="stylesheet" />
+<script src="~/Scripts/dialog/js/bootstrap-dialog.min.js"></script>
+<script src="~/Scripts/echarts.min.js"></script>
+<script id="interpolationtmpl" type="text/x-dot-template">
+    {{~it :value:index}}
+    <li onclick="index.click" data-time="{{=value.Trade_Time}}" data-class="{{=value.Trade_Type}}" data-des="{{=value.Message}}">
+        <h5>{{=value.Trade_Type}} | {{=value.Trade_Time}} | {{=value.Resp_NO}} | {{=value.Pin_Code}} | {{=value.Ftag}} | {{=value.Succeed}}</h5>
+        <p>{{=value.Message}}</p>
+    </li>
+    {{~}}
+</script>
+
+    <script>
+        var index = index || {
+            url: "/api/InsertLog/GetLog?p=1&pagesize=5&Normal=true",
+            errorurl: "/api/InsertLog/GetLog?p=1&pagesize=5&error=true"
+        };
+        var padChart = echarts.init(document.getElementById('pad'));
+        var jhChart = echarts.init(document.getElementById('jh'));
+        (function () {
+            $(document).ready(function () {
+                $('#1').addClass('active');
+                index.charts();
+                index.li();
+                //index.update();
+                //index.scroll();
+                index.interval();
+            });
+            index.li = function () {
+                $.ajax({
+                    url: index.url,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.length > 1) {
+                            var interText = doT.template($("#interpolationtmpl").text());
+                            $("#interpolation").html(interText(data));
+                        }
+                    }
+                });
+                $.ajax({
+                    url: index.errorurl,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.length > 1) {
+                            var interText = doT.template($("#interpolationtmpl").text());
+                            $("#errorul").html(interText(data));
+                        }
+                    }
+                });
+            };
+            index.scroll = function () {
+                var scrtime;
+                $("#interpolation").hover(function () {
+                    clearInterval(scrtime);
+                }, function () {
+                    scrtime = setInterval(function () {
+                        var ul = $("#interpolation");
+                        var liHeight = ul.find("li:last").height();
+                        ul.animate({ marginTop: liHeight + 40 + "px" }, 1000, function () {
+                            ul.find("li:last").prependTo(ul)
+                            ul.find("li:first").hide();
+                            ul.css({ marginTop: 0 });
+                            ul.find("li:first").fadeIn(1000);
+                        });
+
+                    }, 3000);
+                }).trigger("mouseleave");
+            };
+            index.update = function (index) {
+                var ul = $("#interpolation");
+                var time = ul.find("li:first").attr('data-time');
+                if (index === 1) {
+                    $.ajax({
+                        url: '/api/InsertLog/GetLog?Normal=true&p=1&pagesize=1&StartTime=' + time,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.length >= 1) {
+                                var interText = doT.template($("#interpolationtmpl").text());
+                                var html = interText(data);
+                                var ul = $("#interpolation");
+                                var liHeight = ul.find("li:last").height();
+                                ul.animate({ marginTop: liHeight + 20 + "px" }, 1000, function () {
+                                    $(html).prependTo(ul)
+                                    ul.find("li:first").hide();
+                                    ul.css({ marginTop: 0 });
+                                    ul.find("li:first").fadeIn(1000);
+                                    ul.find("li:last").remove();
+                                });
+                                //jhNormalDataValue = jhChart.getOption().series[0].data[0].value ;
+                                //jhErrorDataValue = jhChart.getOption().series[0].data[1].value;
+                                //jhChart.setOption({
+                                //    series:{
+                                //        data:[
+                                //            {value:jhNormalDataValue + 10, name:'正常日志'},
+                                //            {value:jhErrorDataValue + 5, name:'异常日志'}
+                                //        ]
+                                //    }
+                                //});
+                            }
+                        }
+                    });
+                };
+                if (index === 2) {
+                    $.ajax({
+                        url: '/api/InsertLog/GetLog?Error=true&p=1&pagesize=1&StartTime=' + time,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.length >= 1) {
+                                var interText = doT.template($("#interpolationtmpl").text());
+                                var html = interText(data);
+                                var ul = $("#errorul");
+                                var liHeight = ul.find("li:last").height();
+                                ul.animate({ marginTop: liHeight + 20 + "px" }, 1000, function () {
+                                    $(html).prependTo(ul)
+                                    ul.find("li:first").hide();
+                                    ul.css({ marginTop: 0 });
+                                    ul.find("li:first").fadeIn(1000);
+                                    ul.find("li:last").remove();
+                                });
+                            }
+                        }
+                    });
+                };
+                if (index === 0) {
+                    $.ajax({
+                        url: '/api/InsertLog/GetLog?Normal=true&p=1&pagesize=1&StartTime=' + time,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.length >= 1) {
+                                var interText = doT.template($("#interpolationtmpl").text());
+                                var html = interText(data);
+                                var ul = $("#interpolation");
+                                var liHeight = ul.find("li:last").height();
+                                ul.animate({ marginTop: liHeight + 20 + "px" }, 1000, function () {
+                                    $(html).prependTo(ul)
+                                    ul.find("li:first").hide();
+                                    ul.css({ marginTop: 0 });
+                                    ul.find("li:first").fadeIn(1000);
+                                    ul.find("li:last").remove();
+                                });
+                            }
+                        }
+                    });
+                    $.ajax({
+                        url: '/api/InsertLog/GetLog?Error=true&p=1&pagesize=1&StartTime=' + time,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.length >= 1) {
+                                var interText = doT.template($("#interpolationtmpl").text());
+                                var html = interText(data);
+                                var ul = $("#errorul");
+                                var liHeight = ul.find("li:last").height();
+                                ul.animate({ marginTop: liHeight + 20 + "px" }, 1000, function () {
+                                    $(html).prependTo(ul)
+                                    ul.find("li:first").hide();
+                                    ul.css({ marginTop: 0 });
+                                    ul.find("li:first").fadeIn(1000);
+                                    ul.find("li:last").remove();
+                                });
+                            }
+                        }
+                    });
+                };
+
+
+            };
+            index.interval = function () {
+                var scrtime;
+                $("#interpolation").hover(function () {
+                    clearInterval(scrtime);
+                    scrtime = setInterval('index.update(2)', 3000);
+                    index.click();
+                }, function () {
+                    clearInterval(scrtime);
+                    scrtime = setInterval('index.update(0)', 3000);
+                }).trigger("mouseleave");
+                $("#errorul").hover(function () {
+                    clearInterval(scrtime);
+                    scrtime = setInterval('index.update(1)', 3000);
+                    index.click();
+                }, function () {
+                    clearInterval(scrtime);
+                    scrtime = setInterval('index.update(0)', 3000);
+                }).trigger("mouseleave");
+            };
+            index.click = function () {
+                var context = $('.row .placeholders');
+                $('li',context).unbind('click');
+                $('li',context).on('click', function (e) {
+                    var self = this,
+                        time = $(self).attr('data-time'),
+                        clas = $(self).attr('data-class'),
+                        description = $(self).attr('data-des'),
+                        textAndPic = $('<div></div>');
+                    textAndPic.append('<b>时间：</b>' + time + '</br><hr>');
+                    textAndPic.append('<b>类名：</b>' + clas + '</br><hr>');
+                    textAndPic.append('<b>附加信息：</b>' + description + '</br>');
+
+                    BootstrapDialog.show({
+                        title: '日志详情',
+                        message: textAndPic,
+                        buttons: [{
+                            label: '关闭',
+                            action: function (dialogItself) {
+                                dialogItself.close();
+                            }
+                        }],
+                        onshown: function () {
+                            $('.modal-content').css('overflow-y', 'auto');
+                        }
+                    });
+
+                });
+            };
+            index.charts = function () {
+                
+                var option_pad = {
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    series: [
+                        {
+                            name: 'pad日志',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '60%'],
+                            data: [
+                                { value: @ViewBag.PadNormal, name: '正常日志' },
+                                { value: @ViewBag.PadError, name: '异常日志' }
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                var option_jh = {
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b}: {c} ({d}%)"
+                    },
+                    series: [
+                        {
+                            name:'交行日志',
+                            type:'pie',
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                normal: {
+                                    show: false,
+                                    position: 'center'
+                                },
+                                emphasis: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: '30',
+                                        fontWeight: 'bold'
+                                    }
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data:[
+                                {value:135, name:'正常日志'},
+                                {value:1548, name:'异常日志'}
+                            ]
+                        }
+                    ]
+                };
+                padChart.setOption(option_pad);
+                jhChart.setOption(option_jh);
+            };
+        })();
+    </script>
+}

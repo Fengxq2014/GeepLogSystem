@@ -88,10 +88,10 @@
                 list.searchTerms.action=$.getUrlParam('action');
                 list.searchTerms.error=$.getUrlParam('error');
                 list.searchTerms.normal=$.getUrlParam('normal');
-                list.searchTerms.q=$.getUrlParam('q').replace(/(^\s*)|(\s*$)/g, "");
+                list.searchTerms.q=$.getUrlParam('q') && $.getUrlParam('q').replace(/(^\s*)|(\s*$)/g, "");
                 list.searchTerms.at=$.getUrlParam('at');
-                list.searchTerms.startTime=$.getUrlParam('startTime').replace('%3A',':');
-                list.searchTerms.endTime=$.getUrlParam('endTime').replace('%3A',':');
+                list.searchTerms.startTime=$.getUrlParam('startTime') && $.getUrlParam('startTime').replace('%3A',':');
+                list.searchTerms.endTime=$.getUrlParam('endTime') && $.getUrlParam('endTime').replace('%3A',':');
             };
             list.click = function () {
                 $('.zft-tr').on('click', function (e) {

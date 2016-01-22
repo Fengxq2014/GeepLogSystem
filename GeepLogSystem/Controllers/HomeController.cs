@@ -22,13 +22,13 @@ namespace GeepLogSystem.Controllers
         {
             ViewBag.PadNormal = SearchService.LogCount(LogNameEnum.ZFT, false);
             ViewBag.PadError = SearchService.LogCount(LogNameEnum.ZFT, true);
-            ViewBag.Cvept = SearchService.LogCount(LogNameEnum.CVEPT, false);
-            ViewBag.CveptError = SearchService.LogCount(LogNameEnum.CVEPT, true);
-            ViewBag.Management = SearchService.LogCount(LogNameEnum.Management, false);
-            ViewBag.ManagementError = SearchService.LogCount(LogNameEnum.Management, true);
-            ViewBag.ProtocolComponent = SearchService.LogCount(LogNameEnum.ProtocolComponent, false);
-            ViewBag.ProtocolComponentError = SearchService.LogCount(LogNameEnum.ProtocolComponent, true);
-            return View();
+            //ViewBag.Cvept = SearchService.LogCount(LogNameEnum.CVEPT, false);
+            //ViewBag.CveptError = SearchService.LogCount(LogNameEnum.CVEPT, true);
+            //ViewBag.Management = SearchService.LogCount(LogNameEnum.Management, false);
+            //ViewBag.ManagementError = SearchService.LogCount(LogNameEnum.Management, true);
+            //ViewBag.ProtocolComponent = SearchService.LogCount(LogNameEnum.ProtocolComponent, false);
+            //ViewBag.ProtocolComponentError = SearchService.LogCount(LogNameEnum.ProtocolComponent, true);
+            return View("NewIndex");
         }
 
         /// <summary>
@@ -248,6 +248,19 @@ namespace GeepLogSystem.Controllers
             }
             watch.Stop();
             return watch.Elapsed.ToStr();
+        }
+
+        public ActionResult jh(int p =1)
+        {
+            
+            long count;
+            SearchTermsModel search = new SearchTermsModel() { Action = "newindex" };
+            ViewBag.ZFTList = SearchService.Search<log_list>(search, out count, p);
+            ViewBag.Count = count;
+            ViewBag.Page = p < 1 ? 1 : p;
+            ViewBag.Title = "转账电话";
+            ViewBag.ActiveId = 13;
+            return View();
         }
     }
 }

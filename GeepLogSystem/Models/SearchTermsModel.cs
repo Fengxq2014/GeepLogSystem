@@ -61,5 +61,7 @@ namespace GeepLogSystem.Models
         /// 附加描述
         /// </summary>
         public bool Description { get; set; }
+
+        public bool Succeed { get; set; }
     }
 }

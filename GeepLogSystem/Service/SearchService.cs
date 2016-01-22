@@ -23,7 +23,7 @@ namespace GeepLogSystem.Service
         /// <param name="count">总条数</param>
         /// <param name="p">页码</param>
         /// <returns></returns>
-        public static IEnumerable<ZFTLogModel> Search(SearchTermsModel searchTerms, out long count, int p = 1)
+        public static IEnumerable<ZFTLogModel> Search(SearchTermsModel searchTerms, out long count, int p = 1, int PageSize = 15)
         {
             if (searchTerms == null)
             {
@@ -88,6 +88,10 @@ namespace GeepLogSystem.Service
             {
                 filter = filter & builder.Eq("IsErrorLog", true);
             }
+            if (searchTerms.StartTime.Year >= 2015)
+            {
+                filter = filter & builder.Gt("Time", searchTerms.StartTime);
+            }
             if (searchTerms.StartTime.Year >= 2015 && searchTerms.EndTime.Year >= 2015 && searchTerms.EndTime > searchTerms.StartTime)
             {
                 filter = filter & builder.Gte("Time", searchTerms.StartTime) & builder.Lte("Time", searchTerms.EndTime);
@@ -96,7 +100,88 @@ namespace GeepLogSystem.Service
             {
                 filter = builder.Regex("AccNo", searchTerms.q) | builder.Regex("Class", searchTerms.q) | builder.Regex("Description", searchTerms.q) | builder.Regex("DevNo", searchTerms.q) | builder.Regex("Label", searchTerms.q);
             }
-            return model.FindAll(out count, filter, p);
+            return model.FindAll(out count, filter, p, PageSize);
+        }
+
+        public static IEnumerable<T> Search<T>(SearchTermsModel searchTerms, out long count, int p = 1, int PageSize = 15) where T:GeepLogModel,new()
+        {
+            if (searchTerms == null)
+            {
+                count = 0;
+                return new List<T>() { new T() };
+            }
+            if (string.IsNullOrWhiteSpace(searchTerms.Action))
+            {
+                count = 0;
+                return new List<T>() { new T() };
+            }
+            var model = new MongoDBHelper<T>();
+            var builder = Builders<T>.Filter;
+            FilterDefinition<T> filter = builder.Exists("_id");
+
+            if (searchTerms.AccNo)
+            {
+                //filter = builder.Regex("AccNo", new BsonRegularExpression("*" + searchTerms.q));
+                filter = filter & builder.Regex("AccNo", searchTerms.q);
+            }
+            if (searchTerms.Action.ToLower() != "index" && searchTerms.Action.ToLower() != "search")
+            {
+                string actionName = searchTerms.Action.ToStr().ToLower();
+                if (actionName == "zft" || actionName == "zfterror")
+                {
+                    filter = filter & builder.Eq("LogName", LogNameEnum.ZFT);
+                }
+                if (actionName == "cvept" || actionName == "cvepterror")
+                {
+                    filter = filter & builder.Eq("LogName", LogNameEnum.CVEPT);
+                }
+                if (actionName == "management" || actionName == "managementerror")
+                {
+                    filter = filter & builder.Eq("LogName", LogNameEnum.Management);
+                }
+                if (actionName == "protocolcomponent" || actionName == "protocolcomponenterror")
+                {
+                    filter = filter & builder.Eq("LogName", LogNameEnum.ProtocolComponent);
+                }
+            }
+            if (searchTerms.ClassName)
+            {
+                filter = filter & builder.Eq("Class", searchTerms.q);
+            }
+            if (searchTerms.DevNo)
+            {
+                filter = filter & builder.Eq("DevNo", searchTerms.q);
+            }
+            if (searchTerms.Label)
+            {
+                filter = filter & builder.Eq("Label", searchTerms.q);
+            }
+            if (searchTerms.Description)
+            {
+                filter = filter & builder.Regex("Description", searchTerms.q);
+            }
+            if (searchTerms.Normal)
+            {
+                filter = filter & builder.Eq("Succeed", true);
+            }
+            if (searchTerms.Error)
+            {
+                filter = filter & builder.Eq("Succeed", false);
+                filter = filter | builder.Exists("Succeed", false);
+            }
+            if (searchTerms.StartTime.Year >= 2015)
+            {
+                filter = filter & builder.Gt("Time", searchTerms.StartTime);
+            }
+            if (searchTerms.StartTime.Year >= 2015 && searchTerms.EndTime.Year >= 2015 && searchTerms.EndTime > searchTerms.StartTime)
+            {
+                filter = filter & builder.Gte("Time", searchTerms.StartTime) & builder.Lte("Time", searchTerms.EndTime);
+            }
+            if (!(searchTerms.AccNo || searchTerms.ClassName || searchTerms.Description || searchTerms.DevNo || searchTerms.Label) && !string.IsNullOrWhiteSpace(searchTerms.q))//什么都不选直接搜索
+            {
+                filter = builder.Regex("AccNo", searchTerms.q) | builder.Regex("Class", searchTerms.q) | builder.Regex("Description", searchTerms.q) | builder.Regex("DevNo", searchTerms.q) | builder.Regex("Label", searchTerms.q);
+            }
+            return model.FindAll(out count, filter, p, PageSize);
         }
 
         /// <summary>

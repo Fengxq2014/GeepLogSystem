@@ -98,8 +98,31 @@ body {
 }
 .placeholder {
   margin-bottom: 20px;
+  /*border: 1px #d3d3d3 solid;*/
+  padding:3px;
 }
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
+}
+
+.placeholder ul{
+    padding:0px 10px;
+}
+
+.placeholder ul li {
+    list-style-type: none;
+    border-bottom: 1px #ccc dotted;
+    padding: 20px 0;
+    overflow: hidden;
+}
+
+.placeholder ul li p{
+    text-align:left;
+    padding-left:30px;
+}
+
+.placeholder h5{
+    font-weight: bolder;
+    text-align:left;
 }
