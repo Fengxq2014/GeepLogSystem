@@ -172,15 +172,16 @@ namespace GeepLogSystem.Controllers
         /// <returns>视图</returns>
         public ActionResult Search(SearchTermsModel search, int p = 1, string at = null)
         {
-            long count;
-            if (!string.IsNullOrWhiteSpace(at))
-            {
-                search.Action = at;
-            }
-            ViewBag.ZFTList = SearchService.Search(search, out count, p);
-            ViewBag.Count = count;
-            ViewBag.Page = p < 1 ? 1 : p;
-            return View();
+            //long count;
+            //if (!string.IsNullOrWhiteSpace(at))
+            //{
+            //    search.Action = at;
+            //}
+            //ViewBag.ZFTList = SearchService.Search(search, out count, p);
+            //ViewBag.Count = count;
+            //ViewBag.Page = p < 1 ? 1 : p;
+            
+            return View("NewSearch");
         }
 
         /// <summary>

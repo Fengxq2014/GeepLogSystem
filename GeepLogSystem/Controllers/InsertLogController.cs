@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace GeepLogSystem.Controllers
@@ -62,6 +63,24 @@ namespace GeepLogSystem.Controllers
             search.Action = "newindex";
             return SearchService.Search<log_list>(search, out count, p, pagesize);
             //return SearchService.Search(search, out count, p, pagesize);
+        }
+
+        [HttpGet]
+        public IEnumerable<log_list> TextSearch([FromUri]string q,int p = 1)
+        {
+            string qs = string.Join("\" \"", q.Split(' '));
+            qs = qs.Insert(0, "\"");
+            qs = qs.Insert(qs.Length, "\"");
+            return new MongoDBHelper<log_list>().command(qs);
+        }
+
+        [HttpGet]
+        public string Export(string q)
+        {
+            string timeName = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var rootPath = HttpContext.Current.Server.MapPath(HttpContext.Current.Request.ApplicationPath).ToLower();
+            new MongoDBHelper<log_list>().Export(rootPath + "/" + timeName + ".txt", q);
+            return rootPath + "/" + timeName + ".txt";
         }
     }
 }

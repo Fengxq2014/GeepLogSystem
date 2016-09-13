@@ -1,7 +1,12 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.Win32;
+using MongoDB.Bson;
+using MongoDB.Bson.IO;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using MongoDB.Shared;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -151,6 +156,18 @@ namespace GeepLogSystem.Dao
             //    return null;
             //}
         }
+        public IEnumerable<TEntity> command(string str,int p =1, int pageSize = 50)
+        {
+            var sort = Builders<TEntity>.Sort.Descending("Time");
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return Collection.Find(new BsonDocument()).Skip((p-1)*pageSize).Limit(pageSize).Sort(sort).ToListAsync<TEntity>().Result;
+            }
+            var com = new BsonDocument{
+                {"$text",new BsonDocument{{"$search",str}}}
+            };
+            return Collection.Find(com).Skip((p - 1) * pageSize).Limit(pageSize).Sort(sort).ToListAsync<TEntity>().Result;
+        }
 
         /// <summary>
         /// 获取所有的collection
@@ -187,6 +204,62 @@ namespace GeepLogSystem.Dao
                 MaxTime = TimeSpan.FromSeconds(2)
             };
             return Collection.MapReduceAsync<BsonDocument>(new BsonJavaScript(map), new BsonJavaScript(reduce), options).Result.ToListAsync().Result;
+        }
+
+        public void Export(string fileName ,string str)
+        {
+            #region or关系
+            //var com = new BsonDocument{
+            //    {"$text",new BsonDocument{{"$search",str}}}
+            //}; 
+            #endregion
+            #region and关系
+            var com = new BsonDocument{
+                {"$text",new BsonDocument{{"$search",str}}}
+            };
+            #endregion
+            //using (var streamWriter = new StreamWriter(fileName))
+            //{
+            //    await Collection.Find(com)
+            //        .ForEachAsync(async (document) =>
+            //        {
+            //            using (var stringWriter = new StringWriter())
+            //            using (var jsonWriter = new JsonWriter(stringWriter))
+            //            {
+            //                var context = BsonSerializationContext.CreateRoot(jsonWriter);
+            //                Collection.DocumentSerializer.Serialize(context, document);
+            //                var line = stringWriter.ToString();
+            //                await streamWriter.WriteLineAsync(line);
+            //            }
+            //        });
+            //}
+            using (var streamWriter = new StreamWriter(fileName))
+            {
+
+                var cursor = Collection.Find(com).ToCursor();
+                foreach (var document in cursor.ToEnumerable())
+                {
+                    using (var stringWriter = new StringWriter())
+                    using (var jsonWriter = new JsonWriter(stringWriter))
+                    {
+                        var context = BsonSerializationContext.CreateRoot(jsonWriter);
+                        Collection.DocumentSerializer.Serialize(context, document);
+                        var line = stringWriter.ToString();
+                        streamWriter.WriteLine(line);
+                    }
+                }
+            }
+        }
+
+        private RegistryKey OpenRegistryPath(RegistryKey root, string s)
+        {
+            s = s.Remove(0, 1) + @"/";
+            while (s.IndexOf(@"/") != -1)
+            {
+                root = root.OpenSubKey(s.Substring(0, s.IndexOf(@"/")));
+                s = s.Remove(0, s.IndexOf(@"/") + 1);
+            }
+            return root;
         }
     }
 }

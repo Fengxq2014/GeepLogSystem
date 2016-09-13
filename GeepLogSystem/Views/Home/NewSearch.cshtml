@@ -1,0 +1,205 @@
+﻿@{
+    Layout = "~/Views/_LayoutPage.cshtml";
+    <link href="~/Style/search.css" rel="stylesheet" />
+}
+<div id="app">
+    <span class="form-wrapper cf">
+        <input id="inputtext" v-on:keyup.enter="search" v-model="q" type="text" placeholder="搜索关键词" required>
+        <button type="button" v-on:click="search">搜索</button>
+    </span>
+    <div>
+        <span style="float:left;line-height:69px;padding-right:30px;">共找到： {{count}} 条数据</span>
+        <ul class="pagination pagination-demo pagination-sm"></ul>
+        <a id="export-a" href="javascript:;"><span id="export-span" v-on:click="export">结果导出</span></a>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>交易类型</th>
+                <th>交易时间</th>
+                <th>返回码</th>
+                <th>终端标志</th>
+                <th>流水号</th>
+            </tr>
+        </thead>
+        <tbody id="interpolation">
+            <tr v-for="item in list" data-trade_time="{{item.Trade_Time}}" data-trade_type="{{item.Trade_Type}}" data-resp_no="{{item.Resp_NO}}" data-pin_code="{{item.Pin_Code}}" data-ftag="{{item.Ftag}}" data-message="{{item.Message}}" class="zft-tr" v-on:click="logClick">
+                <th v-if="!item.Succeed"><span class="glyphicon glyphicon-remove"></span>&nbsp;{{item.Trade_Type}} </th>
+                <th v-else><span class="glyphicon glyphicon-ok"></span>&nbsp;{{item.Trade_Type}}</th>
+                <th>{{item.Trade_Time}}</th>
+                <th>{{item.Resp_NO}}</th>
+                <th>{{item.Pin_Code}}</th>
+                <th>{{item.Ftag}}</th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+@section script{
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/vue-resource.js"></script>
+    <link href="~/Scripts/dialog/css/bootstrap-dialog.min.css" rel="stylesheet" />
+    <script src="~/Scripts/dialog/js/bootstrap-dialog.min.js"></script>
+    <script src="~/Scripts/jqPaginator.min.js"></script>
+    <script>
+        //(function () {
+        //    $(document).ready(function () {
+        //        document.getElementById('inputtext').focus();
+        //        var vm = new Vue({
+        //            el: '#app',
+        //            data: {
+        //                q: '',
+        //                list: '',
+        //                count: 0
+        //            },
+        //            methods: {
+        //                search: function () {
+        //                    this.$http({ url: '/api/InsertLog/TextSearch?q=' + this.q, method: 'GET' }).then(function (response) {
+        //                        InitData(response)
+        //                    }, function (response) {
+        //                        alert("请求错误");
+        //                    });
+        //                },
+        //                logClick: function (event) {
+        //                    var self = event.currentTarget,
+        //                        Trade_Type = $(self).attr('data-Trade_Type'),
+        //                        Trade_Time = $(self).attr('data-Trade_Time'),
+        //                        Resp_NO = $(self).attr('data-Resp_NO'),
+        //                        Pin_Code = $(self).attr('data-Pin_Code'),
+        //                        Ftag = $(self).attr('data-Ftag'),
+        //                        Message = $(self).attr('data-Message'),
+
+        //                        textAndPic = $('<div></div>');
+        //                    textAndPic.append('<b>交易类型：</b>' + Trade_Type + '</br><hr>');
+        //                    textAndPic.append('<b>交易时间：</b>' + Trade_Time + '</br><hr>');
+        //                    textAndPic.append('<b>返回码：</b>' + Resp_NO + '</br><hr>');
+        //                    textAndPic.append('<b>终端标志：</b>' + Pin_Code + '</br><hr>');
+        //                    textAndPic.append('<b>流水号：</b>' + Ftag + '</br><hr>');
+        //                    textAndPic.append('<b>附加信息：</b>' + Message + '</br><hr>');
+
+        //                    BootstrapDialog.show({
+        //                        title: '日志详情',
+        //                        message: textAndPic,
+        //                        buttons: [{
+        //                            label: '关闭',
+        //                            action: function (dialogItself) {
+        //                                dialogItself.close();
+        //                            }
+        //                        }],
+        //                        onshown: function () {
+        //                            $('.modal-content').css('overflow-y', 'auto');
+        //                        }
+        //                    })
+        //                },
+        //                page: Page()
+        //            }
+        //        });
+        //        Page().call(vm);
+        //    });
+        //})()
+        document.getElementById('inputtext').focus();
+        //Vue.use('vue-resource');
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                q: '',
+                list: '',
+                count: 0
+            },
+            methods: {
+                search: function () {
+                    if (!this.q) {
+                        alert("搜索条件为空");
+                    } else {
+                        this.$http({ url: '/api/InsertLog/TextSearch?q=' + this.q, method: 'GET' }).then(function (response) {
+                            InitData(response)
+                        }, function (response) {
+                            alert("请求错误");
+                        });
+                    }
+                    
+                },
+                logClick: function (event) {
+                    var self = event.currentTarget,
+                        Trade_Type = $(self).attr('data-Trade_Type'),
+                        Trade_Time = $(self).attr('data-Trade_Time'),
+                        Resp_NO = $(self).attr('data-Resp_NO'),
+                        Pin_Code = $(self).attr('data-Pin_Code'),
+                        Ftag = $(self).attr('data-Ftag'),
+                        Message = $(self).attr('data-Message'),
+
+                        textAndPic = $('<div></div>');
+                    textAndPic.append('<b>交易类型：</b>' + Trade_Type + '</br><hr>');
+                    textAndPic.append('<b>交易时间：</b>' + Trade_Time + '</br><hr>');
+                    textAndPic.append('<b>返回码：</b>' + Resp_NO + '</br><hr>');
+                    textAndPic.append('<b>终端标志：</b>' + Pin_Code + '</br><hr>');
+                    textAndPic.append('<b>流水号：</b>' + Ftag + '</br><hr>');
+                    textAndPic.append('<b>附加信息：</b>' + Message + '</br><hr>');
+
+                    BootstrapDialog.show({
+                        title: '日志详情',
+                        message: textAndPic,
+                        buttons: [{
+                            label: '关闭',
+                            action: function (dialogItself) {
+                                dialogItself.close();
+                            }
+                        }],
+                        onshown: function () {
+                            $('.modal-content').css('overflow-y', 'auto');
+                        }
+                    })
+                },
+                page: Page,
+                export: function () {
+                    if (!this.q) {
+                        alert("搜索条件为空");
+                    } else {
+                        $('#export-span').text('导出中。。');
+                        this.$http({ url: '/api/InsertLog/Export?q=' + this.q, method: 'GET' }).then(function (response) {
+                            alert("导出成功" + response.data);
+                            $('#export-span').text('结果导出');
+                        }, function (response) {
+                            alert("导出错误");
+                            $('#export-span').text('结果导出');
+                        });
+                    }
+                    
+                }
+            }
+
+        });
+        function InitData(response) {
+            if (response && response.data && response.data.length > 0) {
+                var data = response.data;
+                vm.count = response.data.length;
+                vm.list = data;
+                //vm.page();
+                $('.form-wrapper').animate({ marginTop: "10px", marginBottom: "25px" }, 800);
+            } else {
+                alert('没有找到对应的结果');
+                vm.list = '';
+                vm.count = 0;
+            }
+        };
+        function Page() {
+            $(".pagination-demo").jqPaginator({
+                totalCounts: vm.count,
+                pageSize: 15,
+                visiblePages: 10,
+                currentPage: 1,
+                first: '<li class="first"><a href="?p=1">首页<\/a><\/li>',
+                prev: '<li class="prev"><a href="?p={{page}}">上一页<\/a><\/li>',
+                next: '<li class="next"><a href="?p={{page}}">下一页<\/a><\/li>',
+                last: '<li class="last"><a href="?p={{totalPages}}">末页<\/a><\/li>',
+                page: '<li class="page"><a href="?p={{page}}">{{page}}<\/a><\/li>',
+                onPageChange: function (n) {
+                    $(".pagination-demo .disabled").each(function () {
+                        $(this).find('a').attr('href', '#');
+                    })
+                }
+            });
+
+        };
+    </script>
+}
+

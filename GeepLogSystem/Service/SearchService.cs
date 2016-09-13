@@ -184,6 +184,18 @@ namespace GeepLogSystem.Service
             return model.FindAll(out count, filter, p, PageSize);
         }
 
+        //public static IEnumerable<T> Search<T>(string qryList, out long count, int p = 1, int pageSize = 15) where T : GeepLogModel, new()
+        //{
+        //    var model = new MongoDBHelper<T>();
+        //    var builder = Builders<T>.Filter;
+        //    FilterDefinition<T> filter = builder.Exists("_id");
+        //    if (qryList.Length > 0)
+        //    {
+        //        filter = filter & builder.Text(;
+        //    }
+        //    return model.FindAll(out count, filter, p, pageSize);
+        //}
+
         /// <summary>
         /// 查询日志数量
         /// </summary>
