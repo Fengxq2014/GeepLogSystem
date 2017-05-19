@@ -143,7 +143,7 @@ namespace GeepLogSystem.Controllers
             ViewBag.Count = count;
             ViewBag.Page = p < 1 ? 1 : p;
             ViewBag.Title = "微信批量导入";
-            ViewBag.ActiveId = 4;
+            ViewBag.ActiveId = 5;
             return View("Common");
         }
 
@@ -155,7 +155,7 @@ namespace GeepLogSystem.Controllers
             ViewBag.Count = count;
             ViewBag.Page = p < 1 ? 1 : p;
             ViewBag.Title = "微信批量导入异常";
-            ViewBag.ActiveId = 8;
+            ViewBag.ActiveId = 9;
             return View("Common");
         }
 
