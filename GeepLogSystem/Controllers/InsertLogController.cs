@@ -69,7 +69,7 @@ namespace GeepLogSystem.Controllers
         public IEnumerable<log> TextSearch([FromUri]string q, int p = 1)
         {
             string qs = string.Join("\" \"", q.Split(' '));
-            qs = qs.Insert(0, "\"");
+            qs = qs.Insert(0, "\""); 
             qs = qs.Insert(qs.Length, "\"");
             var lists = new MongoDBHelper<log>().command(qs);
             //var list = lists.GetEnumerator();
