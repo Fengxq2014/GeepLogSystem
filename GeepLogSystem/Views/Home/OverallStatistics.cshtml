@@ -42,7 +42,7 @@
         trigger: 'axis'
     },
     legend: {
-        data:['pad智付通','转账电话','管理端','协议组件']
+        data:['微信后端','微信前端']
     },
     xAxis : [
         {
@@ -61,9 +61,9 @@
     ],
     series : [
         {
-            name:'pad智付通',
+            name:'微信后端',
             type:'line',
-            data: @ViewBag.Pad,
+            data: @ViewBag.Wxback,
             markPoint : {
                 data : [
                     {type : 'max', name: '最大值'},
@@ -77,41 +77,9 @@
             }
         },
         {
-            name:'转账电话',
+            name:'微信前端',
             type:'line',
-            data:@ViewBag.Cvept,
-            markPoint : {
-                data : [
-                    {type : 'max', name: '最大值'},
-                    {type : 'min', name: '最小值'}
-                ]
-            },
-            markLine : {
-                data : [
-                    {type : 'average', name : '平均值'}
-                ]
-            }
-        },
-        {
-            name:'管理端',
-            type:'line',
-            data:@ViewBag.Management,
-            markPoint : {
-                data : [
-                    {type : 'max', name: '最大值'},
-                    {type : 'min', name: '最小值'}
-                ]
-            },
-            markLine : {
-                data : [
-                    {type : 'average', name : '平均值'}
-                ]
-            }
-        },
-        {
-            name:'协议组件',
-            type:'line',
-            data:@ViewBag.ProtocolComponent,
+            data:@ViewBag.Front,
             markPoint : {
                 data : [
                     {type : 'max', name: '最大值'},

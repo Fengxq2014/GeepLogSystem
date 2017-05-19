@@ -9,8 +9,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>AccNo</th>
-                <th>DevNo</th>
+                <th>是否正常日志</th>
+                <th>IP地址</th>
                 <th>Time</th>
                 <th>Class</th>
             </tr>
@@ -19,17 +19,17 @@
             @{
     foreach (var item in ViewBag.ZFTList)
     {
-        <tr data-accno="@item.AccNo" data-devno="@item.DevNo" data-time="@item.Time" data-class="@item.Class" data-ip="@item.Ip" data-level="@item.Level" data-description="@item.Description" data-label="@item.Label" data-ex="@item.Exception" data-iserrorlog="@item.IsErrorLog" class="zft-tr">
+        <tr data-time="@item.Time" data-class="@item.Class" data-ip="@item.Ip" data-description="@item.Description" data-iserrorlog="@item.IsErrorLog" class="zft-tr">
             @{if (item.IsErrorLog)
             {
-                <th><span class="glyphicon glyphicon-remove"></span>&nbsp;@item.AccNo </th>
+                <th><span class="glyphicon glyphicon-remove"></span>&nbsp;</th>
             }
             else
             {
-                <th><span class="glyphicon glyphicon-ok"></span>&nbsp;@item.AccNo</th>
+                <th><span class="glyphicon glyphicon-ok"></span>&nbsp;</th>
             }
             }
-            <th>@item.DevNo</th>
+            <th>@item.Ip</th>
             <th>@item.Time</th>
             <th>@item.Class</th>
         </tr>
@@ -56,27 +56,16 @@
             list.click = function () {
                 $('.zft-tr').on('click', function (e) {
                     var self = this,
-                        accNo = $(self).attr('data-accNo'),
-                        devNo = $(self).attr('data-devNo'),
                         time = $(self).attr('data-Time'),
-                        clas = $(self).attr('data-class'),
                         ip = $(self).attr('data-ip'),
-                        level = $(self).attr('data-level'),
-                        label = $(self).attr('data-label'),
+                        clas = $(self).attr('data-class'),
                         description = $(self).attr('data-description'),
                         ex=$(self).attr('data-ex'),
                         textAndPic = $('<div></div>');
-                    textAndPic.append('<b>卡号：</b>' + accNo + '</br><hr>');
-                    textAndPic.append('<b>终端号：</b>' + devNo + '</br><hr>');
                     textAndPic.append('<b>时间：</b>' + time + '</br><hr>');
+                    textAndPic.append('<b>ip地址：</b>' + ip + '</br><hr>');
                     textAndPic.append('<b>类名：</b>' + clas + '</br><hr>');
-                    textAndPic.append('<b>ip：</b>' + ip + '</br><hr>');
-                    textAndPic.append('<b>日志级别：</b>' + level + '</br><hr>');
-                    textAndPic.append('<b>自定义标志：</b>' + label + '</br><hr>');
                     textAndPic.append('<b>附加信息：</b>' + description + '</br>');
-                    if ($(self).attr('data-isErrorLog') && ex) {
-                        textAndPic.append('<hr><b>异常信息：</b>' + ex + '</br>');
-                    };
                     BootstrapDialog.show({
                         title: '日志详情',
                         message: textAndPic,

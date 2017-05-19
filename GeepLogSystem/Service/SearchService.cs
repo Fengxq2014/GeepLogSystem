@@ -23,21 +23,21 @@ namespace GeepLogSystem.Service
         /// <param name="count">总条数</param>
         /// <param name="p">页码</param>
         /// <returns></returns>
-        public static IEnumerable<ZFTLogModel> Search(SearchTermsModel searchTerms, out long count, int p = 1, int PageSize = 15)
+        public static IEnumerable<log> Search(SearchTermsModel searchTerms, out long count, int p = 1, int PageSize = 15)
         {
             if (searchTerms == null)
             {
                 count = 0;
-                return new List<ZFTLogModel>() { new ZFTLogModel() { AccNo = "筛选条件为空" } };
+                return new List<log>() { new log() { AccNo = "筛选条件为空" } };
             }
             if (string.IsNullOrWhiteSpace(searchTerms.Action))
             {
                 count = 0;
-                return new List<ZFTLogModel>() { new ZFTLogModel() { AccNo = "action为空" } };
+                return new List<log>() { new log() { AccNo = "action为空" } };
             }
-            var model = new MongoDBHelper<ZFTLogModel>();
-            var builder = Builders<ZFTLogModel>.Filter;
-            FilterDefinition<ZFTLogModel> filter = builder.Exists("_id");
+            var model = new MongoDBHelper<log>();
+            var builder = Builders<log>.Filter;
+            FilterDefinition<log> filter = builder.Exists("_id");
 
             if (searchTerms.AccNo)
             {
@@ -47,21 +47,21 @@ namespace GeepLogSystem.Service
             if (searchTerms.Action.ToLower() != "index" && searchTerms.Action.ToLower() != "search")
             {
                 string actionName = searchTerms.Action.ToStr().ToLower();
-                if (actionName == "zft" || actionName == "zfterror")
+                if (actionName == "wxback" || actionName == "wxbackerror")
                 {
-                    filter = filter & builder.Eq("LogName", LogNameEnum.ZFT);
+                    filter = filter & builder.Eq("logname", LogNameEnum.Wxback);
                 }
-                if (actionName == "cvept" || actionName == "cvepterror")
+                if (actionName == "front" || actionName == "fronterror")
                 {
-                    filter = filter & builder.Eq("LogName", LogNameEnum.CVEPT);
+                    filter = filter & builder.Eq("logname", LogNameEnum.Front);
                 }
-                if (actionName == "management" || actionName == "managementerror")
+                if (actionName == "wxabc" || actionName == "wxabcerror")
                 {
-                    filter = filter & builder.Eq("LogName", LogNameEnum.Management);
+                    filter = filter & builder.Eq("logname", LogNameEnum.WxABC);
                 }
-                if (actionName == "protocolcomponent" || actionName == "protocolcomponenterror")
+                if (actionName == "wxbi" || actionName == "wxbierror")
                 {
-                    filter = filter & builder.Eq("LogName", LogNameEnum.ProtocolComponent);
+                    filter = filter & builder.Eq("logname", LogNameEnum.WxBI);
                 }
             }
             if (searchTerms.ClassName)
@@ -204,16 +204,16 @@ namespace GeepLogSystem.Service
         /// <returns></returns>
         public static int LogCount(string name, bool errorlog)
         {
-            var model = new MongoDBHelper<ZFTLogModel>();
-            var builder = Builders<ZFTLogModel>.Filter;
-            FilterDefinition<ZFTLogModel> filter = builder.Eq("LogName", name);
+            var model = new MongoDBHelper<log>();
+            var builder = Builders<log>.Filter;
+            FilterDefinition<log> filter = builder.Eq("logname", name);
             if (errorlog)
             {
-                filter = filter & builder.Eq("IsErrorLog", true);
+                filter = filter & builder.Eq("iserror", true);
             }
             else
             {
-                filter = filter & builder.Eq("IsErrorLog", false);
+                filter = filter & builder.Eq("iserror", false);
             }
             long count;
             model.FindAll(out count, filter);
@@ -228,7 +228,7 @@ namespace GeepLogSystem.Service
         /// <param name="name">类名数组</param>
         public static void Statistic(out string names, out string valuse, string name = null)
         {
-            var model = new MongoDBHelper<ZFTLogModel>();
+            var model = new MongoDBHelper<log>();
             var map = model.MapReduce().Take(10);
             List<Statistics> maps = new List<Statistics>();
             foreach (var c in map)
@@ -255,15 +255,15 @@ namespace GeepLogSystem.Service
         /// <returns></returns>
         public static string GetErrorLogCountOfWeek(string logName)
         {
-            var model = new MongoDBHelper<ZFTLogModel>();
-            var builder = Builders<ZFTLogModel>.Filter;
+            var model = new MongoDBHelper<log>();
+            var builder = Builders<log>.Filter;
 
             List<int> resultList = new List<int>();
             for (int i = 1; i < 8; i++)
             {
-                FilterDefinition<ZFTLogModel> filter = builder.Exists("_id") & builder.Eq("LogName", logName) & builder.Eq("IsErrorLog", true);
+                FilterDefinition<log> filter = builder.Exists("_id") & builder.Eq("LogName", logName) & builder.Eq("iserror", true);
                 DateTime day = DateTime.Now.Date;
-                filter = filter & builder.Gte("Time", day.AddDays(-i + 1)) & builder.Lte("Time", day.AddDays(-i + 2));
+                filter = filter & builder.Gte("time", day.AddDays(-i + 1)) & builder.Lte("time", day.AddDays(-i + 2));
                 long count;
                 model.FindAll(out count, filter);
                 resultList.Add(Convert.ToInt32(count));
@@ -284,5 +284,31 @@ namespace GeepLogSystem.Service
             }
             return ob.ToString().Trim();
         }
+
+        /// <summary> 
+        /// 将Unix时间戳转换为DateTime类型时间
+        /// </summary> 
+        /// <param name="d"> double 型数字 </param> 
+        /// <returns> DateTime </returns> 
+        public static DateTime ConvertIntDateTime(double d)
+        {
+            DateTime time = DateTime.MinValue;
+            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            time = startTime.AddSeconds(d);
+            return time;
+        }
+
+        /// <summary> 
+        /// 将c# DateTime时间格式转换为Unix时间戳格式
+        /// </summary> 
+        /// <param name="time"> 时间 </param> 
+        /// <returns> double </returns> 
+        public static double ConvertDateTimeInt(DateTime time)
+        {
+            double intResult = 0;
+            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            intResult = (time - startTime).TotalSeconds;
+            return intResult;
+        } 
     }
 }

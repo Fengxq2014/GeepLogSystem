@@ -513,59 +513,46 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.ZFT(System.Int32)">
+        <member name="M:GeepLogSystem.Controllers.HomeController.Wxback(System.Int32)">
             <summary>
-            pad智付通
+            微信后端
             </summary>
             <param name="p">页数</param>
             <returns></returns>
         </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.CVEPT(System.Int32)">
+        <member name="M:GeepLogSystem.Controllers.HomeController.WxbackError(System.Int32)">
             <summary>
-            转账电话
+            微信后端异常
             </summary>
             <param name="p">页数</param>
             <returns></returns>
         </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.Management(System.Int32)">
+        <member name="M:GeepLogSystem.Controllers.HomeController.Front(System.Int32)">
             <summary>
-            管理端
+            前端
             </summary>
             <param name="p">页数</param>
             <returns></returns>
         </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.ProtocolComponent(System.Int32)">
+        <member name="M:GeepLogSystem.Controllers.HomeController.FrontError(System.Int32)">
             <summary>
-            协议组件
+            前端
             </summary>
-            <param name="p"></param>
+            <param name="p">页数</param>
             <returns></returns>
         </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.ZFTError(System.Int32)">
+        <member name="M:GeepLogSystem.Controllers.HomeController.WxABC(System.Int32)">
             <summary>
-            pad智付通（异常）
+            前端
             </summary>
-            <returns>视图</returns>
-        </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.CVEPTError(System.Int32)">
-            <summary>
-            转账电话（异常）
-            </summary>
-            <param name="p">页码</param>
+            <param name="p">页数</param>
             <returns></returns>
         </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.ManagementError(System.Int32)">
+        <member name="M:GeepLogSystem.Controllers.HomeController.WxABCError(System.Int32)">
             <summary>
-            管理端（异常）
+            前端
             </summary>
-            <param name="p"></param>
-            <returns></returns>
-        </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.ProtocolComponentError(System.Int32)">
-            <summary>
-            协议组件（异常）
-            </summary>
-            <param name="p"></param>
+            <param name="p">页数</param>
             <returns></returns>
         </member>
         <member name="M:GeepLogSystem.Controllers.HomeController.Search(GeepLogSystem.Models.SearchTermsModel,System.Int32,System.String)">
@@ -582,11 +569,11 @@
         </member>
         <member name="M:GeepLogSystem.Controllers.HomeController.ZFTStatistics">
             <summary>
-            pad智付通统计
+            统计
             </summary>
             <returns></returns>
         </member>
-        <member name="M:GeepLogSystem.Controllers.HomeController.InsertLog(GeepLogSystem.Models.ZFTLogModel)">
+        <member name="M:GeepLogSystem.Controllers.HomeController.InsertLog(GeepLogSystem.Models.log)">
             <summary>
             插入日志
             </summary>
@@ -598,7 +585,7 @@
             插入日志
             </summary>
         </member>
-        <member name="M:GeepLogSystem.Controllers.InsertLogController.PostInsert(GeepLogSystem.Models.ZFTLogModel)">
+        <member name="M:GeepLogSystem.Controllers.InsertLogController.PostInsert(GeepLogSystem.Models.log)">
             <summary>
             插入单条日志
             </summary>
@@ -709,74 +696,59 @@
             附加描述
             </summary>
         </member>
-        <member name="T:GeepLogSystem.Models.ZFTLogModel">
+        <member name="T:GeepLogSystem.Models.log">
             <summary>
             ZFT日志
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.DevNo">
+        <member name="P:GeepLogSystem.Models.log.DevNo">
             <summary>
             设备号
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Time">
+        <member name="P:GeepLogSystem.Models.log.Time">
             <summary>
             时间
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Class">
+        <member name="P:GeepLogSystem.Models.log.Class">
             <summary>
             类名
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.AccNo">
+        <member name="P:GeepLogSystem.Models.log.AccNo">
             <summary>
             卡号
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Ip">
+        <member name="P:GeepLogSystem.Models.log.Ip">
             <summary>
             服务器ip
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Level">
+        <member name="P:GeepLogSystem.Models.log.Level">
             <summary>
             日志级别
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Label">
+        <member name="P:GeepLogSystem.Models.log.Label">
             <summary>
             自定义标志
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Description">
+        <member name="P:GeepLogSystem.Models.log.Description">
             <summary>
             附加描述
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.IsErrorLog">
+        <member name="P:GeepLogSystem.Models.log.IsErrorLog">
             <summary>
             异常日志标志
             </summary>
         </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.LogName">
+        <member name="P:GeepLogSystem.Models.log.LogName">
             <summary>
             日志分类
-            </summary>
-        </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Exception">
-            <summary>
-            错误信息
-            </summary>
-        </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Trade_Type">
-            <summary>
-            交易类型
-            </summary>
-        </member>
-        <member name="P:GeepLogSystem.Models.ZFTLogModel.Trade_Time">
-            <summary>
-            
             </summary>
         </member>
         <member name="T:GeepLogSystem.Service.SearchService">
@@ -822,6 +794,20 @@
             </summary>
             <param name="ob"></param>
             <returns></returns>
+        </member>
+        <member name="M:GeepLogSystem.Service.SearchService.ConvertIntDateTime(System.Double)">
+            <summary> 
+            将Unix时间戳转换为DateTime类型时间
+            </summary> 
+            <param name="d"> double 型数字 </param> 
+            <returns> DateTime </returns> 
+        </member>
+        <member name="M:GeepLogSystem.Service.SearchService.ConvertDateTimeInt(System.DateTime)">
+            <summary> 
+            将c# DateTime时间格式转换为Unix时间戳格式
+            </summary> 
+            <param name="time"> 时间 </param> 
+            <returns> double </returns> 
         </member>
     </members>
 </doc>

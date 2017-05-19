@@ -39,5 +39,12 @@ namespace GeepLogSystem.Models
         /// 协议组件
         /// </summary>
         public static string ProtocolComponent = "PROTOCOLCOMPONENT";
+
+        public static string Front = "front";
+
+        public static string Wxback = "wxback";
+
+        public static string WxABC = "wxabc";
+        public static string WxBI = "wxbi";
     }
 }

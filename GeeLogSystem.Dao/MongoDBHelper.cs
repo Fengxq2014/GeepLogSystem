@@ -41,7 +41,8 @@ namespace GeepLogSystem.Dao
         /// <summary>
         /// 数据库
         /// </summary>
-        protected static IMongoDatabase database = client.GetDatabase(mongoUrl.DatabaseName);
+        //protected static IMongoDatabase database = client.GetDatabase(mongoUrl.DatabaseName);
+        protected static IMongoDatabase database = client.GetDatabase("log");
 
         public MongoDBHelper()
         {
@@ -138,7 +139,10 @@ namespace GeepLogSystem.Dao
             {
                 page = 1;
             }
-            var sort = Builders<TEntity>.Sort.Descending("Time");
+            //var sort = Builders<TEntity>.Sort.Descending("time");
+            var sort = new BsonDocument{
+                {"$natural",-1}
+            };
             var a = Collection.Find(filter);
             count = a.CountAsync().Result;
             //int PageSize = Convert.ToInt16(Help.GetConfigValueForNull("PageSize"));
@@ -158,7 +162,9 @@ namespace GeepLogSystem.Dao
         }
         public IEnumerable<TEntity> command(string str,int p =1, int pageSize = 50)
         {
-            var sort = Builders<TEntity>.Sort.Descending("Time");
+            var sort = new BsonDocument{
+                {"_id",-1}
+            };
             if (string.IsNullOrWhiteSpace(str))
             {
                 return Collection.Find(new BsonDocument()).Skip((p-1)*pageSize).Limit(pageSize).Sort(sort).ToListAsync<TEntity>().Result;
@@ -188,7 +194,7 @@ namespace GeepLogSystem.Dao
         public IEnumerable<BsonDocument> MapReduce()
         {
             string map = @"function(){
-                        emit(this.Class, 1);
+                        emit(this.class, 1);
                         }";
             string reduce = @"function(key,values){
                         var sum=0;
@@ -200,7 +206,7 @@ namespace GeepLogSystem.Dao
             var builder = Builders<TEntity>.Filter;
             var options = new MapReduceOptions<TEntity, BsonDocument>
             {
-                Filter = builder.Eq("IsErrorLog", true) & builder.Gte("Time", DateTime.Now.AddMonths(-1)) & builder.Lte("Time", DateTime.Now),
+                Filter = builder.Eq("iserror", true) & builder.Gte("time", DateTime.Now.AddMonths(-1)) & builder.Lte("time", DateTime.Now),
                 MaxTime = TimeSpan.FromSeconds(2)
             };
             return Collection.MapReduceAsync<BsonDocument>(new BsonJavaScript(map), new BsonJavaScript(reduce), options).Result.ToListAsync().Result;

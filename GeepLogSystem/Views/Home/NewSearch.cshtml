@@ -15,21 +15,19 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>交易类型</th>
-                <th>交易时间</th>
-                <th>返回码</th>
-                <th>终端标志</th>
-                <th>流水号</th>
+                <th>类型</th>
+                <th>ip地址</th>
+                <th>时间</th>
+                <th>类名</th>
             </tr>
         </thead>
         <tbody id="interpolation">
-            <tr v-for="item in list" data-trade_time="{{item.Trade_Time}}" data-trade_type="{{item.Trade_Type}}" data-resp_no="{{item.Resp_NO}}" data-pin_code="{{item.Pin_Code}}" data-ftag="{{item.Ftag}}" data-message="{{item.Message}}" class="zft-tr" v-on:click="logClick">
-                <th v-if="!item.Succeed"><span class="glyphicon glyphicon-remove"></span>&nbsp;{{item.Trade_Type}} </th>
-                <th v-else><span class="glyphicon glyphicon-ok"></span>&nbsp;{{item.Trade_Type}}</th>
-                <th>{{item.Trade_Time}}</th>
-                <th>{{item.Resp_NO}}</th>
-                <th>{{item.Pin_Code}}</th>
-                <th>{{item.Ftag}}</th>
+            <tr v-for="item in list" data-time="{{item.Time}}" data-class="{{item.Class}}" data-Ip="{{item.Ip}}" data-description="{{item.Description}}" class="zft-tr" v-on:click="logClick">
+                <th v-if="item.IsErrorLog"><span class="glyphicon glyphicon-remove"></span>&nbsp;{{item.LogName}} </th>
+                <th v-else><span class="glyphicon glyphicon-ok"></span>&nbsp;{{item.LogName}}</th>
+                <th>{{item.Ip}}</th>
+                <th>{{item.Time}}</th>
+                <th>{{item.Class}}</th>
             </tr>
         </tbody>
     </table>
@@ -41,61 +39,7 @@
     <script src="~/Scripts/dialog/js/bootstrap-dialog.min.js"></script>
     <script src="~/Scripts/jqPaginator.min.js"></script>
     <script>
-        //(function () {
-        //    $(document).ready(function () {
-        //        document.getElementById('inputtext').focus();
-        //        var vm = new Vue({
-        //            el: '#app',
-        //            data: {
-        //                q: '',
-        //                list: '',
-        //                count: 0
-        //            },
-        //            methods: {
-        //                search: function () {
-        //                    this.$http({ url: '/api/InsertLog/TextSearch?q=' + this.q, method: 'GET' }).then(function (response) {
-        //                        InitData(response)
-        //                    }, function (response) {
-        //                        alert("请求错误");
-        //                    });
-        //                },
-        //                logClick: function (event) {
-        //                    var self = event.currentTarget,
-        //                        Trade_Type = $(self).attr('data-Trade_Type'),
-        //                        Trade_Time = $(self).attr('data-Trade_Time'),
-        //                        Resp_NO = $(self).attr('data-Resp_NO'),
-        //                        Pin_Code = $(self).attr('data-Pin_Code'),
-        //                        Ftag = $(self).attr('data-Ftag'),
-        //                        Message = $(self).attr('data-Message'),
-
-        //                        textAndPic = $('<div></div>');
-        //                    textAndPic.append('<b>交易类型：</b>' + Trade_Type + '</br><hr>');
-        //                    textAndPic.append('<b>交易时间：</b>' + Trade_Time + '</br><hr>');
-        //                    textAndPic.append('<b>返回码：</b>' + Resp_NO + '</br><hr>');
-        //                    textAndPic.append('<b>终端标志：</b>' + Pin_Code + '</br><hr>');
-        //                    textAndPic.append('<b>流水号：</b>' + Ftag + '</br><hr>');
-        //                    textAndPic.append('<b>附加信息：</b>' + Message + '</br><hr>');
-
-        //                    BootstrapDialog.show({
-        //                        title: '日志详情',
-        //                        message: textAndPic,
-        //                        buttons: [{
-        //                            label: '关闭',
-        //                            action: function (dialogItself) {
-        //                                dialogItself.close();
-        //                            }
-        //                        }],
-        //                        onshown: function () {
-        //                            $('.modal-content').css('overflow-y', 'auto');
-        //                        }
-        //                    })
-        //                },
-        //                page: Page()
-        //            }
-        //        });
-        //        Page().call(vm);
-        //    });
-        //})()
+        $('#@ViewBag.ActiveId').addClass('active');
         document.getElementById('inputtext').focus();
         //Vue.use('vue-resource');
         var vm = new Vue({
@@ -120,20 +64,16 @@
                 },
                 logClick: function (event) {
                     var self = event.currentTarget,
-                        Trade_Type = $(self).attr('data-Trade_Type'),
-                        Trade_Time = $(self).attr('data-Trade_Time'),
-                        Resp_NO = $(self).attr('data-Resp_NO'),
-                        Pin_Code = $(self).attr('data-Pin_Code'),
-                        Ftag = $(self).attr('data-Ftag'),
-                        Message = $(self).attr('data-Message'),
+                        Trade_Type = $(self).attr('data-Class'),
+                        Trade_Ip = $(self).attr('data-Ip'),
+                        Trade_Time = $(self).attr('data-Time'),
+                        Message = $(self).attr('data-description'),
 
                         textAndPic = $('<div></div>');
-                    textAndPic.append('<b>交易类型：</b>' + Trade_Type + '</br><hr>');
-                    textAndPic.append('<b>交易时间：</b>' + Trade_Time + '</br><hr>');
-                    textAndPic.append('<b>返回码：</b>' + Resp_NO + '</br><hr>');
-                    textAndPic.append('<b>终端标志：</b>' + Pin_Code + '</br><hr>');
-                    textAndPic.append('<b>流水号：</b>' + Ftag + '</br><hr>');
-                    textAndPic.append('<b>附加信息：</b>' + Message + '</br><hr>');
+                    textAndPic.append('<b>类名：</b>' + Trade_Type + '</br><hr>');
+                    textAndPic.append('<b>ip地址：</b>' + Trade_Ip + '</br><hr>');
+                    textAndPic.append('<b>时间：</b>' + Trade_Time + '</br><hr>');
+                    textAndPic.append('<b>附加信息：</b>' + Message + '</br>');
 
                     BootstrapDialog.show({
                         title: '日志详情',

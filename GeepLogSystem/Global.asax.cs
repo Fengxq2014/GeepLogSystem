@@ -19,11 +19,11 @@ namespace GeepLogSystem
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);            
         }
-        void Application_Error(object sender, EventArgs e)
-        {
-            // 在出现未处理的错误时运行的代码
-            Exception objExp = HttpContext.Current.Server.GetLastError();
-            //Response.Redirect("/home");
-        }
+        //void Application_Error(object sender, EventArgs e)
+        //{
+        //    // 在出现未处理的错误时运行的代码
+        //    Exception objExp = HttpContext.Current.Server.GetLastError();
+        //    //Response.Redirect("/home");
+        //}
     }
 }

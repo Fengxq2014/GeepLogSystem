@@ -8,20 +8,16 @@
 
 <div class="row placeholders">
     <div class="col-xs-6 col-sm-6 placeholder">
-        <div id="pad" style="height:250px"></div>
-        <h4>支付通pad</h4>
+        <div id="wxback" style="height:250px"></div>
+        <h4>微信后台</h4>
     </div>
     <div class="col-xs-6 col-sm-6 placeholder">
-        <div id="CVEPT" style="height:250px"></div>
-        <h4>转账电话</h4>
+        <div id="front" style="height:250px"></div>
+        <h4>微信前端</h4>
     </div>
     <div class="col-xs-6 col-sm-6 placeholder">
-        <div id="div3" style="height:250px"></div>
-        <h4>管理端</h4>
-    </div>
-    <div class="col-xs-6 col-sm-6 placeholder">
-        <div id="div4" style="height:250px"></div>
-        <h4>协议组件</h4>
+        <div id="wxabc" style="height:250px"></div>
+        <h4>特色交易</h4>
     </div>
 </div>
 
@@ -43,10 +39,9 @@
         ],
         function (ec) {
             // 基于准备好的dom，初始化echarts图表
-            var pad = ec.init(document.getElementById('pad'));
-            var cvept = ec.init(document.getElementById('CVEPT'));
-            var div3 = ec.init(document.getElementById('div3'));
-            var div4 = ec.init(document.getElementById('div4'));
+            var pad = ec.init(document.getElementById('wxback'));
+            var cvept = ec.init(document.getElementById('front'));
+            var wxabc = ec.init(document.getElementById('wxabc'));
 
             var option = {
                 tooltip: {
@@ -85,8 +80,8 @@
                             }
                         },
                         data: [
-                            { value: @ViewBag.PadNormal, name: '正常日志' },
-                            { value: @ViewBag.PadError, name: '异常日志' }
+                            { value: @ViewBag.Wxback, name: '正常日志' },
+                            { value: @ViewBag.WxbackError, name: '异常日志' }
                         ]
                     }
                 ]
@@ -110,57 +105,13 @@
                         radius: '55%',
                         center: ['50%', '60%'],
                         data: [
-                            { value: @ViewBag.Cvept, name: '正常日志' },
-                            { value: @ViewBag.CveptError, name: '异常日志' }
+                            { value: @ViewBag.Front, name: '正常日志' },
+                            { value: @ViewBag.FrontError, name: '异常日志' }
                         ]
                     }
                 ]
             };
-
-            var option3 = {
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b} : {c} ({d}%)"
-                },
-                legend: {
-                    orient: 'vertical',
-                    x: 'left',
-                    data: ['正常日志', '异常日志']
-                },
-
-                series: [
-                    {
-                        name: '日志数量',
-                        type: 'pie',
-                        radius: ['50%', '70%'],
-                        itemStyle: {
-                            normal: {
-                                label: {
-                                    show: false
-                                },
-                                labelLine: {
-                                    show: false
-                                }
-                            },
-                            emphasis: {
-                                label: {
-                                    show: true,
-                                    position: 'center',
-                                    textStyle: {
-                                        fontSize: '30',
-                                        fontWeight: 'bold'
-                                    }
-                                }
-                            }
-                        },
-                        data: [
-                            { value: @ViewBag.Management, name: '正常日志' },
-                            { value: @ViewBag.ManagementError, name: '异常日志' }
-                        ]
-                    }
-                ]
-            };
-            var option4 = {
+            var option2 = {
                 tooltip: {
                     trigger: 'item',
                     formatter: "{a} <br/>{b} : {c} ({d}%)"
@@ -178,8 +129,8 @@
                         radius: '55%',
                         center: ['50%', '60%'],
                         data: [
-                            { value: @ViewBag.ProtocolComponent, name: '正常日志' },
-                            { value: @ViewBag.ProtocolComponentError, name: '异常日志' }
+                            { value: @ViewBag.Wxabc, name: '正常日志' },
+                            { value: @ViewBag.WxabctError, name: '异常日志' }
                         ]
                     }
                 ]
@@ -187,8 +138,7 @@
             // 为echarts对象加载数据
             pad.setOption(option);
             cvept.setOption(option1);
-            div3.setOption(option3);
-            div4.setOption(option4);
+            wxabc.setOption(option2);
         }
     );
 </script>    

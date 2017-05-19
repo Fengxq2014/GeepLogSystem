@@ -20,7 +20,7 @@ namespace GeepLogSystem.Controllers
         /// 插入单条日志
         /// </summary>
         /// <param name="model">ZFTLogModel模型类</param>
-        public string PostInsert(GeepLogSystem.Models.ZFTLogModel model)
+        public string PostInsert(GeepLogSystem.Models.log model)
         {
             if (model == null)
             {
@@ -36,7 +36,7 @@ namespace GeepLogSystem.Controllers
             string req = System.Text.Encoding.Default.GetString(byts);
             model.Ip = GetIp();
             model.Time = DateTime.Now;
-            var Dao = new MongoDBHelper<GeepLogSystem.Models.ZFTLogModel>();
+            var Dao = new MongoDBHelper<GeepLogSystem.Models.log>();
             //var result = Dao.InsterOneAsync(model);
             return "ok";
         }
@@ -66,12 +66,20 @@ namespace GeepLogSystem.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<log_list> TextSearch([FromUri]string q,int p = 1)
+        public IEnumerable<log> TextSearch([FromUri]string q, int p = 1)
         {
             string qs = string.Join("\" \"", q.Split(' '));
             qs = qs.Insert(0, "\"");
             qs = qs.Insert(qs.Length, "\"");
-            return new MongoDBHelper<log_list>().command(qs);
+            var lists = new MongoDBHelper<log>().command(qs);
+            //var list = lists.GetEnumerator();
+            //for (int i = 0; i < lists.Count(); i++)
+            //{
+            //    list.MoveNext();
+            //    list.Current.Time = SearchService.ConvertIntDateTime(double.Parse(list.Current.Time)).ToString("yyyy-MM-dd HH:mm:ss");
+            //}
+            
+            return lists;
         }
 
         [HttpGet]
