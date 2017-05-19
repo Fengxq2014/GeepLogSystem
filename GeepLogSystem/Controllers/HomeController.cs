@@ -147,7 +147,7 @@ namespace GeepLogSystem.Controllers
             return View("Common");
         }
 
-        public ActionResult WxABCError(int p = 1)
+        public ActionResult WxBIError(int p = 1)
         {
             long count;
             SearchTermsModel search = new SearchTermsModel() { Action = ViewBag.ActionName, Error = true };
