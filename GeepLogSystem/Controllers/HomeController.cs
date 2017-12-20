@@ -244,5 +244,22 @@ namespace GeepLogSystem.Controllers
             return watch.Elapsed.ToStr();
         }
 
+        public ActionResult test()
+        {
+            return View("jh");
+        }
+
+        public JsonResult TextSearch(string q, string logname, string startTime, string endTime, bool isError=false, int p = 1)
+        {
+            JsonResult ret = new JsonResult();
+            ret.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            if (string.IsNullOrEmpty(logname))
+            {
+                logname = "wxback,front";
+            }
+            var lists = new MongoDBHelper<log>().logSearch(q, logname.Split(','), startTime, endTime, isError);
+            ret.Data = lists;
+            return ret;
+        }
     }
 }

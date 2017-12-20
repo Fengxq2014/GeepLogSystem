@@ -13,7 +13,7 @@
     display:block;
     width: 450px;
     padding: 15px;
-    margin: 150px auto 50px auto;
+    margin: 150px auto 10px auto;
     background: #444;
     background: rgba(0,0,0,.2);
     border-radius: 10px;
@@ -109,4 +109,12 @@
     color: white;
     background-color: #626B7B;
     text-align: center;
+}
+
+.searchType{
+    text-align:center;
+}
+
+.searchType label{
+    padding-right:15px;
 }

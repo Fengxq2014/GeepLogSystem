@@ -57,7 +57,7 @@ namespace GeepLogSystem.Controllers
             }
         }
 
-        public IEnumerable<log_list> GetLog([FromUri]SearchTermsModel search,int p = 1, int pagesize = 3)
+        public IEnumerable<log_list> GetLog([FromUri]SearchTermsModel search, int p = 1, int pagesize = 3)
         {
             long count;
             search.Action = "newindex";
@@ -66,20 +66,28 @@ namespace GeepLogSystem.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<log> TextSearch([FromUri]string q, int p = 1)
+        public IEnumerable<log> TextSearch([FromUri]string q, string logname=null, string startTime=null, string endTime = null, bool isError = false, int p = 1)
+        {
+            //string qs = string.Join("\" \"", q.Split(' '));
+            //qs = qs.Insert(0, "\""); 
+            //qs = qs.Insert(qs.Length, "\"");
+            //var lists = new MongoDBHelper<log>().command(qs);
+            if (string.IsNullOrEmpty(logname))
+            {
+                logname = "wxback,front";
+            }
+            var lists = new MongoDBHelper<log>().logSearch(q, logname.Split(','), startTime, endTime, isError);
+
+            return lists;
+        }
+
+        [HttpGet]
+        public int TextSearchCount([FromUri]string q)
         {
             string qs = string.Join("\" \"", q.Split(' '));
-            qs = qs.Insert(0, "\""); 
+            qs = qs.Insert(0, "\"");
             qs = qs.Insert(qs.Length, "\"");
-            var lists = new MongoDBHelper<log>().command(qs);
-            //var list = lists.GetEnumerator();
-            //for (int i = 0; i < lists.Count(); i++)
-            //{
-            //    list.MoveNext();
-            //    list.Current.Time = SearchService.ConvertIntDateTime(double.Parse(list.Current.Time)).ToString("yyyy-MM-dd HH:mm:ss");
-            //}
-            
-            return lists;
+            return new MongoDBHelper<log>().cout(qs);
         }
 
         [HttpGet]
@@ -89,6 +97,18 @@ namespace GeepLogSystem.Controllers
             var rootPath = HttpContext.Current.Server.MapPath(HttpContext.Current.Request.ApplicationPath).ToLower();
             new MongoDBHelper<log_list>().Export(rootPath + "/" + timeName + ".txt", q);
             return rootPath + "/" + timeName + ".txt";
+        }
+
+        [HttpGet]
+        public IEnumerable<log> BeforeLogs([FromUri]string id, string logName)
+        {
+            return new MongoDBHelper<log>().BeforeLogs(id, logName, 5);
+        }
+
+        [HttpGet]
+        public IEnumerable<log> AfterLogs([FromUri]string id, string logName)
+        {
+            return new MongoDBHelper<log>().AfterLogs(id, logName, 2);
         }
     }
 }

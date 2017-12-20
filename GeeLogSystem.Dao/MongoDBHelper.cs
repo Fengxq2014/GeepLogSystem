@@ -160,19 +160,88 @@ namespace GeepLogSystem.Dao
             //    return null;
             //}
         }
-        public IEnumerable<TEntity> command(string str,int p =1, int pageSize = 50)
+
+        public IEnumerable<TEntity> FindAll(FilterDefinition<TEntity> filter = null, BsonDocument sort = null, int page = 1, int PageSize = 15)
+        {
+            if (filter == null)
+            {
+                filter = new BsonDocument();
+            }
+            if (page < 1)
+            {
+                page = 1;
+            }
+            if (sort == null)
+            {
+                sort = new BsonDocument{
+                    {"$natural",-1}
+                };
+            }
+            var a = Collection.Find(filter);
+            return a.Skip((page - 1) * PageSize).Limit(PageSize).Sort(sort).ToListAsync<TEntity>().Result;
+        }
+        public IEnumerable<TEntity> command(string str, int p = 1, int pageSize = 50)
         {
             var sort = new BsonDocument{
                 {"_id",-1}
             };
             if (string.IsNullOrWhiteSpace(str))
             {
-                return Collection.Find(new BsonDocument()).Skip((p-1)*pageSize).Limit(pageSize).Sort(sort).ToListAsync<TEntity>().Result;
+                return Collection.Find(new BsonDocument()).Skip((p - 1) * pageSize).Limit(pageSize).Sort(sort).ToListAsync<TEntity>().Result;
             }
             var com = new BsonDocument{
                 {"$text",new BsonDocument{{"$search",str}}}
             };
             return Collection.Find(com).Skip((p - 1) * pageSize).Limit(pageSize).Sort(sort).ToListAsync<TEntity>().Result;
+        }
+
+        public IEnumerable<TEntity> logSearch(string str, string[] logname, string startTime, string endTime, bool isError, int page = 1, int PageSize = 50)
+        {
+            var builder = Builders<TEntity>.Filter;
+            var filter = builder.Text(str);
+            if (logname != null && logname.Length > 1)
+            {
+                FilterDefinition<TEntity> namefilter = null;
+                namefilter = builder.Eq("logname", logname[0]);
+                for (var i = 1; i < logname.Length; i++)
+                {
+                    namefilter = namefilter | builder.Eq("logname", logname[i]);
+                }
+                filter = filter & namefilter;
+            }
+            if (logname != null && logname.Length == 1)
+            {
+                filter = filter & builder.Eq("logname", logname[0]);
+            }
+            if (isError)
+            {
+                filter = filter & builder.Eq("IsErrorLog", true);
+            }
+            if (startTime != null)
+            {
+                filter = filter & builder.Gte("Time", DateTime.Parse(startTime));
+            }
+            if (endTime != null)
+            {
+                filter = filter & builder.Lte("Time", DateTime.Parse(endTime));
+            }
+            var sort = new BsonDocument{
+                    {"_id",-1}
+                };
+            return FindAll(filter,sort, page, PageSize);
+        }
+
+        public int cout(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return Collection.Find(new BsonDocument()).ToListAsync<TEntity>().Result.Count;
+            }
+            var com = new BsonDocument{
+                {"$text",new BsonDocument{{"$search",str}}},
+                {"logname","wxback"}
+            };
+            return Collection.Find(com).ToListAsync<TEntity>().Result.Count;
         }
 
         /// <summary>
@@ -212,7 +281,7 @@ namespace GeepLogSystem.Dao
             return Collection.MapReduceAsync<BsonDocument>(new BsonJavaScript(map), new BsonJavaScript(reduce), options).Result.ToListAsync().Result;
         }
 
-        public void Export(string fileName ,string str)
+        public void Export(string fileName, string str)
         {
             #region or关系
             //var com = new BsonDocument{
@@ -257,15 +326,25 @@ namespace GeepLogSystem.Dao
             }
         }
 
-        private RegistryKey OpenRegistryPath(RegistryKey root, string s)
+        public IEnumerable<TEntity> BeforeLogs(string id, string logName,int size=5)
         {
-            s = s.Remove(0, 1) + @"/";
-            while (s.IndexOf(@"/") != -1)
-            {
-                root = root.OpenSubKey(s.Substring(0, s.IndexOf(@"/")));
-                s = s.Remove(0, s.IndexOf(@"/") + 1);
-            }
-            return root;
+            return NeighborLogs(id,logName,size,-1);
+        }
+
+        public IEnumerable<TEntity> AfterLogs(string id, string logName, int size = 5)
+        {
+            return NeighborLogs(id, logName, size, 1);
+        }
+
+        public IEnumerable<TEntity> NeighborLogs(string id, string logName, int size, int sort)
+        {
+            var builder = Builders<TEntity>.Filter;
+            var filter = builder.Eq("logname", logName);
+            filter = filter & builder.Lt("_id", new ObjectId(id));
+            var sortFilter = new BsonDocument{
+                    {"_id",sort}
+                };
+            return Collection.Find(filter).Sort(sortFilter).Limit(size).ToListAsync<TEntity>().Result;
         }
     }
 }

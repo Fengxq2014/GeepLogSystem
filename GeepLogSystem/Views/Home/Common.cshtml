@@ -2,24 +2,30 @@
     Layout = "~/Views/_LayoutPage.cshtml";
 }
 <h2 class="sub-header">@ViewBag.Title</h2>
-
+<style>
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+</style>
 <p>共找到： @ViewBag.Count 条数据</p>
 <nav><ul class="pagination pagination-demo pagination-sm"></ul></nav><div class="table-responsive">
 
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>是否正常日志</th>
+                <th></th>
                 <th>IP地址</th>
                 <th>Time</th>
                 <th>Class</th>
+                <th>内容</th>
             </tr>
         </thead>
         <tbody>
             @{
     foreach (var item in ViewBag.ZFTList)
     {
-        <tr data-time="@item.Time" data-class="@item.Class" data-ip="@item.Ip" data-description="@item.Description" data-iserrorlog="@item.IsErrorLog" class="zft-tr">
+        <tr data-time="@item.Time" data-class="@item.Class" data-ip="@item.Ip" data-description="@Html.Encode(item.Description)" data-iserrorlog="@item.IsErrorLog" data-logid="@item._id" class="zft-tr">
             @{if (item.IsErrorLog)
             {
                 <th><span class="glyphicon glyphicon-remove"></span>&nbsp;</th>
@@ -32,6 +38,7 @@
             <th>@item.Ip</th>
             <th>@item.Time</th>
             <th>@item.Class</th>
+            <th>@(item.Description.Substring(item.Description.IndexOf('-') + 1, item.Description.Length - item.Description.IndexOf('-') - 1))</th>
         </tr>
     }
 }
@@ -52,6 +59,7 @@
                 $('#@ViewBag.ActiveId').addClass('active');
                 list.click();
                 list.page();
+                list.str='';
             });
             list.click = function () {
                 $('.zft-tr').on('click', function (e) {
@@ -61,24 +69,8 @@
                         clas = $(self).attr('data-class'),
                         description = $(self).attr('data-description'),
                         ex=$(self).attr('data-ex'),
-                        textAndPic = $('<div></div>');
-                    textAndPic.append('<b>时间：</b>' + time + '</br><hr>');
-                    textAndPic.append('<b>ip地址：</b>' + ip + '</br><hr>');
-                    textAndPic.append('<b>类名：</b>' + clas + '</br><hr>');
-                    textAndPic.append('<b>附加信息：</b>' + description + '</br>');
-                    BootstrapDialog.show({
-                        title: '日志详情',
-                        message: textAndPic,
-                        buttons: [{
-                            label: '关闭',
-                            action: function (dialogItself) {
-                                dialogItself.close();
-                            }
-                        }],
-                        onshown: function () {
-                            $('.modal-content').css('overflow-y', 'auto');
-                        }
-                    });
+                        id=$(self).attr('data-logid');
+                    list.getBeforeLog(id,{ip:ip,clas:clas,description:description})
 
                 });
             };
@@ -100,6 +92,39 @@
                     }
                 });
             };
+            list.getBeforeLog = function(id,op){
+                var resultStr = []
+                $.get('/api/InsertLog/BeforeLogs?id='+ id + '&logname=@ViewBag.actionName').then(function(data){
+                    data.forEach(function(x){
+                        resultStr.push(x.Description)
+                    })
+                    return resultStr.join('\n')
+                }).then(function(resp){
+                    list.str = resp
+                    list.showDilog(op.time,op.ip,op.clas,op.description)
+                })
+            }
+            list.showDilog = function(time,ip,clas,description){
+                textAndPic = $('<div></div>');
+                textAndPic.append('<b>时间：</b>' + time + '</br><hr>');
+                textAndPic.append('<b>ip地址：</b>' + ip + '</br><hr>');
+                textAndPic.append('<b>类名：</b>' + clas + '</br><hr>');
+                textAndPic.append('<b>附加信息：</b><pre>' + description + '</pre></br>');
+                textAndPic.append('<b>前5条日志：</b><pre>' + list.str + '</pre></br><hr>');
+                BootstrapDialog.show({
+                    title: '日志详情',
+                    message: textAndPic,
+                    buttons: [{
+                        label: '关闭',
+                        action: function (dialogItself) {
+                            dialogItself.close();
+                        }
+                    }],
+                    onshown: function () {
+                        $('.modal-content').css('overflow-y', 'auto');
+                    }
+                });
+            }
         })();
     </script>
 }
